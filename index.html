@@ -156,8 +156,14 @@
                     <div class="card p-6 flex items-center"><div class="bg-blue-100 p-4 rounded-full mr-4"><i class="fas fa-balance-scale text-2xl text-blue-600"></i></div><div><p class="text-gray-500 text-sm">Saldo Atual</p><p id="saldo-atual" class="text-2xl font-bold text-gray-800">R$ 0,00</p></div></div>
                     <div class="card p-6 flex items-center"><div class="bg-green-100 p-4 rounded-full mr-4"><i class="fas fa-arrow-up text-2xl text-green-600"></i></div><div><p class="text-gray-500 text-sm">Receitas (Mês)</p><p id="receitas-mes" class="text-2xl font-bold text-green-600">R$ 0,00</p></div></div>
                     <div class="card p-6 flex items-center"><div class="bg-red-100 p-4 rounded-full mr-4"><i class="fas fa-arrow-down text-2xl text-red-600"></i></div><div><p class="text-gray-500 text-sm">Despesas (Mês)</p><p id="despesas-mes" class="text-2xl font-bold text-red-600">R$ 0,00</p></div></div>
-                    <div class="card p-6 flex items-center"><div class="bg-purple-100 p-4 rounded-full mr-4"><i class="fas fa-credit-card text-2xl text-purple-600"></i></div><div><p class="text-gray-500 text-sm">Fatura Cartões (Mês)</p><p id="fatura-cartoes" class="text-2xl font-bold text-purple-600">R$ 0,00</p></div></div>
+                    <div class="card p-6 flex items-center"><div class="bg-purple-100 p-4 rounded-full mr-4"><i class="fas fa-credit-card text-2xl text-purple-600"></i></div><div><p class="text-gray-500 text-sm">Total Faturas</p><p id="fatura-cartoes" class="text-2xl font-bold text-purple-600">R$ 0,00</p></div></div>
                 </div>
+                 <!-- Dashboard de Cartões -->
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Meus Cartões</h3>
+                <div id="dashboard-cartoes" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    <!-- Cards de cartão serão inseridos aqui -->
+                </div>
+
                  <!-- Gráfico e Formulário -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                     <div class="lg:col-span-2 card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Fluxo de Caixa Mensal</h3><canvas id="fluxo-caixa-chart"></canvas></div>
@@ -177,7 +183,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="card p-6 lg:col-span-2"><h3 class="text-xl font-semibold mb-4 text-gray-700">Últimas Transações</h3><div id="lista-transacoes" class="space-y-3 max-h-96 overflow-y-auto"></div></div>
                     <div class="space-y-6">
-                        <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Cartões de Crédito</h3><form id="form-cartao" class="flex gap-2 mb-4"><input type="text" id="nome-cartao" placeholder="Nome do Cartão (Ex: Nubank)" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 text-sm" required><button type="submit" class="btn btn-secondary text-sm">Add</button></form><div id="lista-cartoes" class="space-y-2"></div></div>
+                        <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Gerenciar Cartões</h3><form id="form-cartao" class="space-y-3 mb-4"><input type="text" id="nome-cartao" placeholder="Nome do Cartão" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm" required><input type="number" id="limite-cartao" placeholder="Limite do Cartão" step="0.01" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm" required><button type="submit" class="w-full btn btn-secondary">Adicionar Cartão</button></form><div id="lista-cartoes" class="space-y-4 max-h-60 overflow-y-auto"></div></div>
                         <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Compras Parceladas</h3><form id="form-parcelamento" class="space-y-3"><input type="text" id="parcela-descricao" placeholder="Descrição da compra" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm" required><div class="flex gap-2"><input type="number" id="parcela-valor" placeholder="Valor Total" step="0.01" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm" required><input type="number" id="parcela-numero" placeholder="Nº Parcelas" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm" required></div><button type="submit" class="w-full btn btn-secondary">Adicionar Compra</button></form><div id="lista-parcelamentos" class="space-y-3 mt-4 max-h-60 overflow-y-auto"></div></div>
                     </div>
                 </div>
@@ -309,6 +315,15 @@
             unsubscribeData = onSnapshot(dataRef, (docSnap) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
+
+                    // Garantir a estrutura de dados para cartões antigos
+                    if (data.financas && data.financas.cartoes) {
+                        data.financas.cartoes.forEach(card => {
+                            if (card.limite === undefined) card.limite = 0;
+                            if (!card.pagamentos) card.pagamentos = [];
+                        });
+                    }
+
                     financas = data.financas || { transacoes: [], cartoes: [], parcelamentos: [] };
                     estoque = data.estoque || [];
                     tarefas = data.tarefas || { participantes: [], tarefas: [] };
@@ -350,7 +365,7 @@
             const mesAtual = agora.getMonth();
             const anoAtual = agora.getFullYear();
 
-            let saldo = 0, receitasMes = 0, despesasMes = 0, faturaCartoes = 0;
+            let saldo = 0, receitasMes = 0, despesasMes = 0, totalFaturas = 0;
             
             if(financas && financas.transacoes) {
                 financas.transacoes.forEach(t => {
@@ -358,21 +373,45 @@
                     if (t.tipo === 'receita') {
                         saldo += t.valor;
                         if(dataTransacao.getMonth() === mesAtual && dataTransacao.getFullYear() === anoAtual) receitasMes += t.valor;
-                    } else {
+                    } else if (t.tipo === 'despesa') {
                         if (t.pagamento === 'saldo') {
                             saldo -= t.valor;
-                        } else {
-                            if(dataTransacao.getMonth() === mesAtual && dataTransacao.getFullYear() === anoAtual) faturaCartoes += t.valor;
                         }
                         if(dataTransacao.getMonth() === mesAtual && dataTransacao.getFullYear() === anoAtual) despesasMes += t.valor;
                     }
                 });
             }
+            
+            const dashboardCartoesEl = document.getElementById('dashboard-cartoes');
+            dashboardCartoesEl.innerHTML = '';
+            if (financas.cartoes) {
+                financas.cartoes.forEach(card => {
+                    const gastos = (financas.transacoes || []).filter(t => t.pagamento === card.nome).reduce((acc, t) => acc + t.valor, 0);
+                    const pagamentos = (card.pagamentos || []).reduce((acc, p) => acc + p.valor, 0);
+                    const faturaAtual = gastos - pagamentos;
+                    const saldoDisponivel = (card.limite || 0) - faturaAtual;
+                    totalFaturas += faturaAtual;
+
+                    const cardEl = document.createElement('div');
+                    cardEl.className = 'card p-4';
+                    cardEl.innerHTML = `
+                        <div class="flex items-center">
+                            <div class="bg-indigo-100 p-3 rounded-full mr-4"><i class="fas fa-credit-card text-xl text-indigo-600"></i></div>
+                            <div>
+                                <p class="text-gray-500 text-sm font-semibold">${card.nome}</p>
+                                <p class="text-xl font-bold text-gray-800">${formatCurrency(saldoDisponivel)}</p>
+                                <p class="text-gray-400 text-xs">Limite: ${formatCurrency(card.limite)}</p>
+                            </div>
+                        </div>`;
+                    dashboardCartoesEl.appendChild(cardEl);
+                });
+            }
+
 
             document.getElementById('saldo-atual').textContent = formatCurrency(saldo);
             document.getElementById('receitas-mes').textContent = formatCurrency(receitasMes);
             document.getElementById('despesas-mes').textContent = formatCurrency(despesasMes);
-            document.getElementById('fatura-cartoes').textContent = formatCurrency(faturaCartoes);
+            document.getElementById('fatura-cartoes').textContent = formatCurrency(totalFaturas);
 
             renderListaTransacoes();
             renderListaCartoes();
@@ -409,6 +448,7 @@
             const listaEl = document.getElementById('lista-cartoes');
             const selectPagamento = document.getElementById('pagamento');
             listaEl.innerHTML = '';
+            // Limpa opções antigas, mantendo a primeira ("Saldo da Conta")
             while (selectPagamento.options.length > 1) {
                 selectPagamento.remove(1);
             }
@@ -416,16 +456,36 @@
             if (!financas.cartoes || financas.cartoes.length === 0) {
                 listaEl.innerHTML = '<p class="text-gray-500 text-sm text-center">Nenhum cartão adicionado.</p>';
             } else {
-                financas.cartoes.forEach(c => {
-                    const item = document.createElement('div');
-                    item.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-md';
-                    item.innerHTML = `<span class="text-sm font-medium"><i class="fas fa-credit-card mr-2"></i>${c.nome}</span><button class="text-xs text-gray-400 hover:text-red-500" onclick="deletarCartao(${c.id})"><i class="fas fa-trash-alt"></i></button>`;
-                    listaEl.appendChild(item);
-
+                financas.cartoes.forEach(card => {
+                    // Adiciona cartão ao select de pagamento
                     const option = document.createElement('option');
-                    option.value = c.nome;
-                    option.textContent = c.nome;
+                    option.value = card.nome;
+                    option.textContent = card.nome;
                     selectPagamento.appendChild(option);
+
+                    // Renderiza o card na lista de gerenciamento
+                    const gastos = (financas.transacoes || []).filter(t => t.pagamento === card.nome).reduce((acc, t) => acc + t.valor, 0);
+                    const pagamentos = (card.pagamentos || []).reduce((acc, p) => acc + p.valor, 0);
+                    const faturaAtual = gastos - pagamentos;
+                    const saldoDisponivel = (card.limite || 0) - faturaAtual;
+                    
+                    const item = document.createElement('div');
+                    item.className = 'bg-gray-50 p-3 rounded-lg';
+                    item.innerHTML = `
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold">${card.nome}</span>
+                            <button class="text-xs text-gray-400 hover:text-red-500" onclick="deletarCartao(${card.id})"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                        <div class="text-xs space-y-1">
+                            <p>Fatura: <span class="font-semibold">${formatCurrency(faturaAtual)}</span></p>
+                            <p>Disponível: <span class="font-semibold">${formatCurrency(saldoDisponivel)}</span></p>
+                        </div>
+                        <form class="flex gap-2 mt-3" onsubmit="event.preventDefault(); pagarFatura(${card.id}, this);">
+                            <input type="number" name="valorPagamento" placeholder="Valor a pagar" step="0.01" class="w-full text-sm border-gray-300 rounded-md shadow-sm" required>
+                            <button type="submit" class="btn btn-secondary text-xs p-2">Pagar</button>
+                        </form>
+                    `;
+                    listaEl.appendChild(item);
                 });
             }
         }
@@ -467,7 +527,7 @@
                 financas.transacoes.forEach(t => {
                     const mes = new Date(t.data).getMonth();
                     if (t.tipo === 'receita') receitasData[mes] += t.valor;
-                    else despesasData[mes] += t.valor;
+                    else if(t.tipo === 'despesa') despesasData[mes] += t.valor;
                 });
             }
 
@@ -711,8 +771,9 @@
 
         function adicionarCartao() {
             const nome = document.getElementById('nome-cartao').value;
-            if(!nome) return;
-            const cartao = { id: Date.now(), nome };
+            const limite = parseFloat(document.getElementById('limite-cartao').value);
+            if(!nome || isNaN(limite)) return;
+            const cartao = { id: Date.now(), nome, limite, pagamentos: [] };
             if (!financas.cartoes) financas.cartoes = [];
             financas.cartoes.push(cartao);
             document.getElementById('form-cartao').reset();
@@ -723,6 +784,40 @@
             financas.cartoes = financas.cartoes.filter(c => c.id !== id);
             saveDataToFirebase();
         };
+        
+        window.pagarFatura = (cardId, formElement) => {
+            const valorPagamento = parseFloat(formElement.valorPagamento.value);
+            if (isNaN(valorPagamento) || valorPagamento <= 0) {
+                alert("Por favor, insira um valor de pagamento válido.");
+                return;
+            }
+
+            const card = financas.cartoes.find(c => c.id === cardId);
+            if (card) {
+                // Adiciona o pagamento ao registro do cartão
+                if (!card.pagamentos) card.pagamentos = [];
+                card.pagamentos.push({
+                    id: Date.now(),
+                    data: new Date().toISOString(),
+                    valor: valorPagamento
+                });
+
+                // Cria uma despesa correspondente saindo do saldo principal
+                const transacao = {
+                    id: Date.now(),
+                    data: new Date().toISOString(),
+                    tipo: 'despesa',
+                    descricao: `Pagamento Fatura - ${card.nome}`,
+                    valor: valorPagamento,
+                    pagamento: 'saldo',
+                };
+                financas.transacoes.push(transacao);
+                
+                formElement.reset();
+                saveDataToFirebase();
+            }
+        };
+
 
         function adicionarParcelamento() {
             const descricao = document.getElementById('parcela-descricao').value;
