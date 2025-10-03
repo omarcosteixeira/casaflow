@@ -62,9 +62,61 @@
     </style>
 </head>
 <body class="h-screen">
+
+    <!-- Tela de Autenticação -->
+    <div id="auth-container" class="w-full h-full flex items-center justify-center bg-gray-100">
+        <div class="w-full max-w-md">
+            <!-- Formulário de Login -->
+            <div id="login-card" class="card p-8">
+                <div class="text-center mb-8">
+                    <i class="fas fa-house-user text-5xl text-indigo-600"></i>
+                    <h1 class="text-3xl font-bold mt-2 text-gray-800">Bem-vindo ao Casa Flow</h1>
+                    <p class="text-gray-500">Faça login para continuar</p>
+                </div>
+                <form id="form-login" class="space-y-4">
+                    <div>
+                        <label for="login-email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="login-email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required>
+                    </div>
+                    <div>
+                        <label for="login-senha" class="block text-sm font-medium text-gray-700">Senha</label>
+                        <input type="password" id="login-senha" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required>
+                    </div>
+                    <p id="login-error" class="text-red-500 text-sm hidden"></p>
+                    <button type="submit" class="w-full btn btn-primary py-3">Entrar</button>
+                </form>
+                <p class="text-center text-sm text-gray-600 mt-6">
+                    Não tem uma conta? <a href="#" id="show-cadastro" class="font-medium text-indigo-600 hover:text-indigo-500">Cadastre-se</a>
+                </p>
+            </div>
+            <!-- Formulário de Cadastro -->
+            <div id="cadastro-card" class="card p-8 hidden">
+                 <div class="text-center mb-8">
+                    <i class="fas fa-user-plus text-5xl text-indigo-600"></i>
+                    <h1 class="text-3xl font-bold mt-2 text-gray-800">Crie sua Conta</h1>
+                    <p class="text-gray-500">É rápido e fácil</p>
+                </div>
+                <form id="form-cadastro" class="space-y-4">
+                    <div>
+                        <label for="cadastro-email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="cadastro-email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required>
+                    </div>
+                    <div>
+                        <label for="cadastro-senha" class="block text-sm font-medium text-gray-700">Senha</label>
+                        <input type="password" id="cadastro-senha" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required>
+                    </div>
+                     <p id="cadastro-error" class="text-red-500 text-sm hidden"></p>
+                    <button type="submit" class="w-full btn btn-primary py-3">Criar Conta</button>
+                </form>
+                <p class="text-center text-sm text-gray-600 mt-6">
+                    Já tem uma conta? <a href="#" id="show-login" class="font-medium text-indigo-600 hover:text-indigo-500">Faça login</a>
+                </p>
+            </div>
+        </div>
+    </div>
     
     <!-- Aplicação Principal -->
-    <div id="app-container" class="h-screen w-full flex">
+    <div id="app-container" class="h-screen w-full hidden">
         <!-- Sidebar de Navegação -->
         <aside class="w-20 md:w-64 bg-white shadow-md flex flex-col items-center md:items-start p-4 space-y-6">
             <div class="flex items-center justify-center w-full mb-6">
@@ -85,6 +137,12 @@
                     <span class="hidden md:block ml-4 font-semibold">Tarefas</span>
                 </a>
             </nav>
+            <div class="w-full flex flex-col items-center md:items-stretch">
+                <button id="btn-logout" class="flex items-center justify-center md:justify-start p-3 rounded-lg text-gray-600 hover:bg-red-100">
+                    <i class="fas fa-sign-out-alt w-8 text-center text-xl"></i>
+                    <span class="hidden md:block ml-4 font-semibold">Sair</span>
+                </button>
+            </div>
         </aside>
 
         <!-- Conteúdo Principal -->
@@ -177,7 +235,7 @@
     <script type="module">
         // Importar módulos do Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // Configuração do Firebase
@@ -203,17 +261,29 @@
         let unsubscribeData;
         let fluxoCaixaChart;
         
-        // --- AUTENTICAÇÃO E INICIALIZAÇÃO ---
+        // --- AUTENTICAÇÃO E CONTROLE DE UI ---
+        const authContainer = document.getElementById('auth-container');
+        const appContainer = document.getElementById('app-container');
+        const loginCard = document.getElementById('login-card');
+        const cadastroCard = document.getElementById('cadastro-card');
+
         onAuthStateChanged(auth, user => {
             if (user) {
-                // Utilizador está logado anonimamente.
+                // Utilizador está logado.
                 currentUser = user;
                 initializeAppForUser(user);
+                authContainer.classList.add('hidden');
+                appContainer.classList.remove('hidden');
+                appContainer.classList.add('flex');
             } else {
-                // Nenhum utilizador, fazer login anónimo.
-                signInAnonymously(auth).catch(error => {
-                    console.error("Falha no login anónimo:", error);
-                });
+                // Utilizador está desligado.
+                currentUser = null;
+                if (unsubscribeData) unsubscribeData();
+                authContainer.classList.remove('hidden');
+                appContainer.classList.add('hidden');
+                appContainer.classList.remove('flex');
+                clearLocalState();
+                renderAll();
             }
         });
         
@@ -222,11 +292,9 @@
 
             const dataRef = doc(db, "appData", user.uid);
             
-            // Garante que o documento do utilizador existe antes de escutar
             try {
                 const docSnap = await getDoc(dataRef);
                 if (!docSnap.exists()) {
-                    // Documento não existe, vamos criá-lo com dados iniciais vazios
                     await setDoc(dataRef, {
                         financas: { transacoes: [], cartoes: [], parcelamentos: [] },
                         estoque: [],
@@ -235,26 +303,18 @@
                 }
             } catch (error) {
                 console.error("Erro ao inicializar dados do utilizador:", error);
-                return; // Se houver um erro aqui (talvez permissões), não podemos continuar
+                return;
             }
 
             unsubscribeData = onSnapshot(dataRef, (docSnap) => {
-                // Agora, o documento deve sempre existir
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     financas = data.financas || { transacoes: [], cartoes: [], parcelamentos: [] };
                     estoque = data.estoque || [];
                     tarefas = data.tarefas || { participantes: [], tarefas: [] };
-                } else {
-                     // Este 'else' é agora uma salvaguarda, não deve ser alcançado
-                    console.warn("Documento do utilizador não encontrado após a inicialização.");
-                    financas = { transacoes: [], cartoes: [], parcelamentos: [] };
-                    estoque = [];
-                    tarefas = { participantes: [], tarefas: [] };
                 }
                 renderAll();
             }, error => {
-                // Adicionar um manipulador de erro ao onSnapshot para depuração
                 console.error("Erro no listener do Snapshot:", error);
             });
         }
@@ -263,11 +323,16 @@
             if (!currentUser) return;
             try {
                 const dataRef = doc(db, "appData", currentUser.uid);
-                // setDoc com merge: cria o documento se não existir, ou atualiza se já existir.
                 await setDoc(dataRef, { financas, estoque, tarefas }, { merge: true });
             } catch (error) {
                 console.error("Erro ao salvar dados: ", error);
             }
+        }
+
+        function clearLocalState() {
+            financas = { transacoes: [], cartoes: [], parcelamentos: [] };
+            estoque = [];
+            tarefas = { participantes: [], tarefas: [] };
         }
         
         // --- FUNÇÕES DE RENDERIZAÇÃO ---
@@ -568,6 +633,51 @@
                 });
             });
             showPage('financas'); // Página inicial
+        });
+        
+        // --- MANIPULADORES DE AUTENTICAÇÃO ---
+        document.getElementById('show-cadastro').addEventListener('click', (e) => {
+            e.preventDefault();
+            loginCard.classList.add('hidden');
+            cadastroCard.classList.remove('hidden');
+        });
+
+        document.getElementById('show-login').addEventListener('click', (e) => {
+            e.preventDefault();
+            cadastroCard.classList.add('hidden');
+            loginCard.classList.remove('hidden');
+        });
+
+        document.getElementById('form-login').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const senha = document.getElementById('login-senha').value;
+            const errorEl = document.getElementById('login-error');
+            try {
+                errorEl.classList.add('hidden');
+                await signInWithEmailAndPassword(auth, email, senha);
+            } catch (error) {
+                errorEl.textContent = "Email ou senha inválidos.";
+                errorEl.classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('form-cadastro').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('cadastro-email').value;
+            const senha = document.getElementById('cadastro-senha').value;
+             const errorEl = document.getElementById('cadastro-error');
+            try {
+                errorEl.classList.add('hidden');
+                await createUserWithEmailAndPassword(auth, email, senha);
+            } catch (error) {
+                errorEl.textContent = "Erro ao criar conta. Tente outro email.";
+                errorEl.classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            signOut(auth);
         });
 
         // --- Funções de Ação (CRUD) ---
