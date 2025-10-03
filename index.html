@@ -150,7 +150,15 @@
 
             <!-- Seção Finanças -->
             <section id="financas" class="page">
-                <h2 class="text-3xl font-bold text-gray-800 mb-6">Painel Financeiro</h2>
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800">Painel Financeiro</h2>
+                    <div class="flex items-center gap-4 card p-2">
+                        <button id="prev-month" class="text-gray-600 hover:text-indigo-600 text-xl px-2"><i class="fas fa-chevron-left"></i></button>
+                        <h3 id="current-month-display" class="text-xl font-semibold text-gray-700 w-48 text-center"></h3>
+                        <button id="next-month" class="text-gray-600 hover:text-indigo-600 text-xl px-2"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+
                 <!-- Resumo Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                     <div class="card p-6 flex items-center"><div class="bg-blue-100 p-4 rounded-full mr-4"><i class="fas fa-balance-scale text-2xl text-blue-600"></i></div><div><p class="text-gray-500 text-sm">Saldo Atual</p><p id="saldo-atual" class="text-2xl font-bold text-gray-800">R$ 0,00</p></div></div>
@@ -166,7 +174,7 @@
 
                  <!-- Gráfico e Formulário -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                    <div class="lg:col-span-2 card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Fluxo de Caixa Mensal</h3><canvas id="fluxo-caixa-chart"></canvas></div>
+                    <div class="lg:col-span-2 card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Fluxo de Caixa Anual</h3><canvas id="fluxo-caixa-chart"></canvas></div>
                     <div class="card p-6">
                         <h3 class="text-xl font-semibold mb-4 text-gray-700">Nova Transação</h3>
                         <form id="form-transacao" class="space-y-4">
@@ -181,7 +189,7 @@
                 </div>
                  <!-- Listas -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="card p-6 lg:col-span-2"><h3 class="text-xl font-semibold mb-4 text-gray-700">Últimas Transações</h3><div id="lista-transacoes" class="space-y-3 max-h-96 overflow-y-auto"></div></div>
+                    <div class="card p-6 lg:col-span-2"><h3 class="text-xl font-semibold mb-4 text-gray-700">Transações do Mês</h3><div id="lista-transacoes" class="space-y-3 max-h-96 overflow-y-auto"></div></div>
                     <div class="space-y-6">
                         <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Gerenciar Cartões</h3><form id="form-cartao" class="space-y-3 mb-4"><input type="text" id="nome-cartao" placeholder="Nome do Cartão" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm" required><input type="number" id="limite-cartao" placeholder="Limite do Cartão" step="0.01" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm" required><button type="submit" class="w-full btn btn-secondary">Adicionar Cartão</button></form><div id="lista-cartoes" class="space-y-4 max-h-60 overflow-y-auto"></div></div>
                         <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Compras Parceladas</h3><form id="form-parcelamento" class="space-y-3"><input type="text" id="parcela-descricao" placeholder="Descrição da compra" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm" required><div class="flex gap-2"><input type="number" id="parcela-valor" placeholder="Valor Total" step="0.01" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm" required><input type="number" id="parcela-numero" placeholder="Nº Parcelas" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm" required></div><button type="submit" class="w-full btn btn-secondary">Adicionar Compra</button></form><div id="lista-parcelamentos" class="space-y-3 mt-4 max-h-60 overflow-y-auto"></div></div>
@@ -230,7 +238,8 @@
                     </div>
                     <div class="lg:col-span-2 space-y-6">
                         <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Tarefas Pendentes</h3><div id="lista-tarefas-pendentes" class="space-y-3"></div></div>
-                        <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Quadro de Pontos</h3><div id="quadro-pontos" class="space-y-3"></div></div>
+                        <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Quadro de Pontos (Mês Atual)</h3><div id="quadro-pontos" class="space-y-3"></div></div>
+                        <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Histórico Mensal</h3><div id="historico-pontos" class="space-y-3 max-h-48 overflow-y-auto"></div></div>
                         <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Tarefas Concluídas</h3><div id="lista-tarefas-concluidas" class="space-y-3 max-h-48 overflow-y-auto"></div></div>
                     </div>
                 </div>
@@ -266,6 +275,7 @@
         let currentUser = null;
         let unsubscribeData;
         let fluxoCaixaChart;
+        let selectedDate = new Date();
         
         // --- AUTENTICAÇÃO E CONTROLE DE UI ---
         const authContainer = document.getElementById('auth-container');
@@ -361,27 +371,42 @@
 
         // --- LÓGICA DE FINANÇAS ---
         function renderFinancas() {
-            const agora = new Date();
-            const mesAtual = agora.getMonth();
-            const anoAtual = agora.getFullYear();
+            // Atualiza o display do mês
+            const monthDisplay = document.getElementById('current-month-display');
+            const monthName = selectedDate.toLocaleString('pt-BR', { month: 'long' });
+            monthDisplay.textContent = `${monthName.charAt(0).toUpperCase() + monthName.slice(1)} de ${selectedDate.getFullYear()}`;
 
-            let saldo = 0, receitasMes = 0, despesasMes = 0, totalFaturas = 0;
+            const selectedMonth = selectedDate.getMonth();
+            const selectedYear = selectedDate.getFullYear();
+
+            // Filtra transações para o mês selecionado
+            const transacoesDoMes = (financas.transacoes || []).filter(t => {
+                const dataTransacao = new Date(t.data);
+                return dataTransacao.getMonth() === selectedMonth && dataTransacao.getFullYear() === selectedYear;
+            });
+
+            // Calcula Saldo Atual (cumulativo)
+            let saldo = 0;
+            (financas.transacoes || []).forEach(t => {
+                if (t.tipo === 'receita') {
+                    saldo += t.valor;
+                } else if (t.tipo === 'despesa' && t.pagamento === 'saldo') {
+                    saldo -= t.valor;
+                }
+            });
+
+            // Calcula Receitas e Despesas do Mês (filtrado)
+            let receitasMes = 0, despesasMes = 0;
+            transacoesDoMes.forEach(t => {
+                if (t.tipo === 'receita') {
+                    receitasMes += t.valor;
+                } else if (t.tipo === 'despesa') {
+                    despesasMes += t.valor;
+                }
+            });
             
-            if(financas && financas.transacoes) {
-                financas.transacoes.forEach(t => {
-                    const dataTransacao = new Date(t.data);
-                    if (t.tipo === 'receita') {
-                        saldo += t.valor;
-                        if(dataTransacao.getMonth() === mesAtual && dataTransacao.getFullYear() === anoAtual) receitasMes += t.valor;
-                    } else if (t.tipo === 'despesa') {
-                        if (t.pagamento === 'saldo') {
-                            saldo -= t.valor;
-                        }
-                        if(dataTransacao.getMonth() === mesAtual && dataTransacao.getFullYear() === anoAtual) despesasMes += t.valor;
-                    }
-                });
-            }
-            
+            // Calcula Faturas e Saldo dos Cartões (cumulativo)
+            let totalFaturas = 0;
             const dashboardCartoesEl = document.getElementById('dashboard-cartoes');
             dashboardCartoesEl.innerHTML = '';
             if (financas.cartoes) {
@@ -413,20 +438,30 @@
             document.getElementById('despesas-mes').textContent = formatCurrency(despesasMes);
             document.getElementById('fatura-cartoes').textContent = formatCurrency(totalFaturas);
 
-            renderListaTransacoes();
+            renderListaTransacoes(); // Já vai usar selectedDate
             renderListaCartoes();
             renderListaParcelamentos();
-            renderGraficoFluxoCaixa();
+            renderGraficoFluxoCaixa(); // Mostra o ano todo, não muda
         }
         
         function renderListaTransacoes() {
             const listaEl = document.getElementById('lista-transacoes');
             listaEl.innerHTML = '';
-            if (!financas.transacoes || financas.transacoes.length === 0) {
-                listaEl.innerHTML = '<p class="text-gray-500 text-center">Nenhuma transação registada.</p>';
+
+            const selectedMonth = selectedDate.getMonth();
+            const selectedYear = selectedDate.getFullYear();
+
+            const transacoesDoMes = (financas.transacoes || []).filter(t => {
+                const dataTransacao = new Date(t.data);
+                return dataTransacao.getMonth() === selectedMonth && dataTransacao.getFullYear() === selectedYear;
+            });
+            
+            if (transacoesDoMes.length === 0) {
+                listaEl.innerHTML = '<p class="text-gray-500 text-center">Nenhuma transação neste mês.</p>';
                 return;
             }
-            [...financas.transacoes].sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 20).forEach(t => {
+
+            [...transacoesDoMes].sort((a, b) => new Date(b.data) - new Date(a.data)).forEach(t => {
                 const item = document.createElement('div');
                 const isReceita = t.tipo === 'receita';
                 item.className = `flex justify-between items-center p-3 rounded-lg ${isReceita ? 'bg-green-50' : 'bg-red-50'}`;
@@ -463,7 +498,7 @@
                     option.textContent = card.nome;
                     selectPagamento.appendChild(option);
 
-                    // Renderiza o card na lista de gerenciamento
+                    // Renderiza o card na lista de gerenciamento (valores cumulativos)
                     const gastos = (financas.transacoes || []).filter(t => t.pagamento === card.nome).reduce((acc, t) => acc + t.valor, 0);
                     const pagamentos = (card.pagamentos || []).reduce((acc, p) => acc + p.valor, 0);
                     const faturaAtual = gastos - pagamentos;
@@ -524,7 +559,8 @@
             const despesasData = Array(12).fill(0);
 
             if (financas.transacoes) {
-                financas.transacoes.forEach(t => {
+                const transacoesDoAno = financas.transacoes.filter(t => new Date(t.data).getFullYear() === selectedDate.getFullYear());
+                transacoesDoAno.forEach(t => {
                     const mes = new Date(t.data).getMonth();
                     if (t.tipo === 'receita') receitasData[mes] += t.valor;
                     else if(t.tipo === 'despesa') despesasData[mes] += t.valor;
@@ -583,6 +619,7 @@
             renderParticipantes();
             renderListaTarefas();
             renderQuadroPontos();
+            renderHistoricoPontos();
         }
 
         function renderParticipantes() {
@@ -651,13 +688,77 @@
                  quadroEl.innerHTML = '<p class="text-gray-500 text-center">Nenhum participante adicionado.</p>';
                  return;
             }
-            [...tarefas.participantes].sort((a,b) => b.pontos - a.pontos).forEach(p => {
+            
+            const agora = new Date();
+            const mesKey = `${agora.getFullYear()}-${String(agora.getMonth()).padStart(2, '0')}`;
+
+            const participantesComPontos = tarefas.participantes.map(p => {
+                // Garante que a estrutura de pontos seja um objeto para participantes antigos
+                if (typeof p.pontos !== 'object' || p.pontos === null) {
+                    p.pontos = {};
+                }
+                const pontuacaoAtual = p.pontos[mesKey] === undefined ? 100 : p.pontos[mesKey];
+                return { ...p, pontuacaoAtual };
+            });
+
+            participantesComPontos.sort((a, b) => b.pontuacaoAtual - a.pontuacaoAtual).forEach(p => {
                 const item = document.createElement('div');
                 item.className = 'flex justify-between items-center bg-indigo-50 p-3 rounded-lg';
-                item.innerHTML = `<p class="font-bold text-indigo-800">${p.nome}</p><p class="text-xl font-bold text-indigo-600">${p.pontos} pts</p>`;
+                item.innerHTML = `<p class="font-bold text-indigo-800">${p.nome}</p><p class="text-xl font-bold text-indigo-600">${p.pontuacaoAtual} pts</p>`;
                 quadroEl.appendChild(item);
             });
         }
+
+        function renderHistoricoPontos() {
+            const historicoEl = document.getElementById('historico-pontos');
+            historicoEl.innerHTML = '';
+            const agora = new Date();
+            const mesAtualKey = `${agora.getFullYear()}-${String(agora.getMonth()).padStart(2, '0')}`;
+
+            const todosOsMeses = new Set();
+            if (tarefas.participantes) {
+                tarefas.participantes.forEach(p => {
+                    if (typeof p.pontos === 'object' && p.pontos !== null) {
+                        Object.keys(p.pontos).forEach(mesKey => todosOsMeses.add(mesKey));
+                    }
+                });
+            }
+
+            const mesesPassados = [...todosOsMeses].filter(m => m !== mesAtualKey).sort().reverse();
+
+            if (mesesPassados.length === 0) {
+                historicoEl.innerHTML = '<p class="text-gray-500 text-center">Nenhum histórico de meses fechados.</p>';
+                return;
+            }
+
+            mesesPassados.forEach(mesKey => {
+                let melhorPontuacao = -Infinity;
+                let vencedores = [];
+                
+                tarefas.participantes.forEach(p => {
+                    const pontuacaoMes = (p.pontos && p.pontos[mesKey] !== undefined) ? p.pontos[mesKey] : 100;
+                    if (pontuacaoMes > melhorPontuacao) {
+                        melhorPontuacao = pontuacaoMes;
+                        vencedores = [p.nome];
+                    } else if (pontuacaoMes === melhorPontuacao) {
+                        vencedores.push(p.nome);
+                    }
+                });
+
+                const [ano, mes] = mesKey.split('-');
+                const nomeMes = new Date(ano, parseInt(mes), 1).toLocaleString('pt-BR', { month: 'long' });
+                const nomeMesCapitalizado = nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1);
+
+                const item = document.createElement('div');
+                item.className = 'bg-gray-100 p-2 rounded-md text-sm';
+                item.innerHTML = `
+                    <p class="font-semibold">${nomeMesCapitalizado} de ${ano}</p>
+                    <p>🏆 Vencedor(es): <span class="font-bold">${vencedores.join(', ')}</span> com ${melhorPontuacao} pontos.</p>
+                `;
+                historicoEl.appendChild(item);
+            });
+        }
+
 
         // --- EVENT HANDLERS & FORM SUBMISSIONS ---
         document.getElementById('form-transacao').addEventListener('submit', (e) => { e.preventDefault(); adicionarTransacao(); });
@@ -674,6 +775,17 @@
         document.getElementById('form-estoque').addEventListener('submit', (e) => { e.preventDefault(); adicionarItemEstoque(); });
         document.getElementById('form-tarefa').addEventListener('submit', (e) => { e.preventDefault(); adicionarTarefa(); });
         document.getElementById('form-participante').addEventListener('submit', (e) => { e.preventDefault(); adicionarParticipante(); });
+
+        document.getElementById('prev-month').addEventListener('click', () => {
+            selectedDate.setMonth(selectedDate.getMonth() - 1);
+            renderFinancas();
+        });
+
+        document.getElementById('next-month').addEventListener('click', () => {
+            selectedDate.setMonth(selectedDate.getMonth() + 1);
+            renderFinancas();
+        });
+
 
         // --- INICIALIZAÇÃO DA APLICAÇÃO ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -884,7 +996,7 @@
         function adicionarParticipante() {
             const nome = document.getElementById('participante-nome').value;
             if(!nome) return;
-            const participante = { id: Date.now(), nome, pontos: 100 };
+            const participante = { id: Date.now(), nome, pontos: {} };
             if (!tarefas.participantes) tarefas.participantes = [];
             tarefas.participantes.push(participante);
             document.getElementById('form-participante').reset();
@@ -917,11 +1029,25 @@
                 tarefa.status = foiFeita ? 'feita' : 'nao-feita';
                 tarefa.dataConclusao = new Date().toISOString();
                 
-                if(foiFeita) {
-                    participante.pontos += tarefa.pontos;
-                } else {
-                    participante.pontos -= tarefa.pontos;
+                const agora = new Date();
+                const mesKey = `${agora.getFullYear()}-${String(agora.getMonth()).padStart(2, '0')}`; // Mês é 0-indexado
+
+                // Garante que a estrutura de pontos seja um objeto
+                if (typeof participante.pontos !== 'object' || participante.pontos === null) {
+                    participante.pontos = {};
                 }
+
+                // Inicia a pontuação do mês se não existir
+                if (participante.pontos[mesKey] === undefined) {
+                    participante.pontos[mesKey] = 100;
+                }
+
+                if (foiFeita) {
+                    participante.pontos[mesKey] += tarefa.pontos;
+                } else {
+                    participante.pontos[mesKey] -= tarefa.pontos;
+                }
+
                 saveDataToFirebase();
             }
         }
