@@ -164,17 +164,84 @@
 
             <!-- Seção Finanças -->
             <section id="financas" class="page">
-                <!-- Conteúdo de finanças aqui (inalterado) -->
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Painel Financeiro</h2>
+                <!-- Resumo Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    <div class="card p-6 flex items-center"><div class="bg-blue-100 p-4 rounded-full mr-4"><i class="fas fa-balance-scale text-2xl text-blue-600"></i></div><div><p class="text-gray-500 text-sm">Saldo Atual</p><p id="saldo-atual" class="text-2xl font-bold text-gray-800">R$ 0,00</p></div></div>
+                    <div class="card p-6 flex items-center"><div class="bg-green-100 p-4 rounded-full mr-4"><i class="fas fa-arrow-up text-2xl text-green-600"></i></div><div><p class="text-gray-500 text-sm">Receitas (Mês)</p><p id="receitas-mes" class="text-2xl font-bold text-green-600">R$ 0,00</p></div></div>
+                    <div class="card p-6 flex items-center"><div class="bg-red-100 p-4 rounded-full mr-4"><i class="fas fa-arrow-down text-2xl text-red-600"></i></div><div><p class="text-gray-500 text-sm">Despesas (Mês)</p><p id="despesas-mes" class="text-2xl font-bold text-red-600">R$ 0,00</p></div></div>
+                    <div class="card p-6 flex items-center"><div class="bg-purple-100 p-4 rounded-full mr-4"><i class="fas fa-credit-card text-2xl text-purple-600"></i></div><div><p class="text-gray-500 text-sm">Fatura Cartões (Mês)</p><p id="fatura-cartoes" class="text-2xl font-bold text-purple-600">R$ 0,00</p></div></div>
+                </div>
+                 <!-- Gráfico e Formulário -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                    <div class="lg:col-span-2 card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Fluxo de Caixa Mensal</h3><canvas id="fluxo-caixa-chart"></canvas></div>
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-700">Nova Transação</h3>
+                        <form id="form-transacao" class="space-y-4">
+                            <div><label class="block text-sm font-medium text-gray-700">Tipo</label><div class="flex gap-4 mt-1"><input type="radio" id="tipo-receita" name="tipo" value="receita" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" checked><label for="tipo-receita">Receita</label><input type="radio" id="tipo-despesa" name="tipo" value="despesa" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"><label for="tipo-despesa">Despesa</label></div></div>
+                            <div><label for="descricao" class="block text-sm font-medium text-gray-700">Descrição</label><input type="text" id="descricao" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></div>
+                            <div id="origem-container"><label for="origem" class="block text-sm font-medium text-gray-700">Origem</label><input type="text" id="origem" placeholder="Ex: Salário" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></div>
+                            <div><label for="valor" class="block text-sm font-medium text-gray-700">Valor</label><input type="number" id="valor" step="0.01" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></div>
+                            <div id="pagamento-container" class="hidden"><label for="pagamento" class="block text-sm font-medium text-gray-700">Pago com</label><select id="pagamento" class="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"><option value="saldo">Saldo da Conta</option></select></div>
+                            <button type="submit" class="w-full btn btn-primary">Adicionar</button>
+                        </form>
+                    </div>
+                </div>
+                 <!-- Listas -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="card p-6 lg:col-span-2"><h3 class="text-xl font-semibold mb-4 text-gray-700">Últimas Transações</h3><div id="lista-transacoes" class="space-y-3 max-h-96 overflow-y-auto"></div></div>
+                    <div class="space-y-6">
+                        <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Cartões de Crédito</h3><form id="form-cartao" class="flex gap-2 mb-4"><input type="text" id="nome-cartao" placeholder="Nome do Cartão (Ex: Nubank)" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 text-sm" required><button type="submit" class="btn btn-secondary text-sm">Add</button></form><div id="lista-cartoes" class="space-y-2"></div></div>
+                        <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Compras Parceladas</h3><form id="form-parcelamento" class="space-y-3"><input type="text" id="parcela-descricao" placeholder="Descrição da compra" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm" required><div class="flex gap-2"><input type="number" id="parcela-valor" placeholder="Valor Total" step="0.01" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm" required><input type="number" id="parcela-numero" placeholder="Nº Parcelas" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm" required></div><button type="submit" class="w-full btn btn-secondary">Adicionar Compra</button></form><div id="lista-parcelamentos" class="space-y-3 mt-4 max-h-60 overflow-y-auto"></div></div>
+                    </div>
+                </div>
             </section>
 
             <!-- Seção Estoque -->
             <section id="estoque" class="page hidden">
-                 <!-- Conteúdo de estoque aqui (inalterado) -->
+                 <h2 class="text-3xl font-bold text-gray-800 mb-6">Lista de Compras e Estoque</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-700">Adicionar Item</h3>
+                        <form id="form-estoque" class="space-y-4">
+                             <div><label for="item-nome" class="block text-sm font-medium text-gray-700">Nome do Item</label><input type="text" id="item-nome" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></div>
+                             <div class="flex gap-4"><div class="flex-1"><label for="item-qtd" class="block text-sm font-medium text-gray-700">Quantidade</label><input type="number" id="item-qtd" value="1" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></div><div class="flex-1"><label for="item-min" class="block text-sm font-medium text-gray-700">Qtd. Mínima</label><input type="number" id="item-min" value="1" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></div></div>
+                             <button type="submit" class="w-full btn btn-primary">Adicionar ao Estoque</button>
+                        </form>
+                    </div>
+                    <div class="lg:col-span-2 card p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-700">Itens em Estoque</h3>
+                        <div id="lista-estoque" class="space-y-3 max-h-[70vh] overflow-y-auto"></div>
+                    </div>
+                </div>
             </section>
 
             <!-- Seção Tarefas -->
             <section id="tarefas" class="page hidden">
-                 <!-- Conteúdo de tarefas aqui (inalterado) -->
+                 <h2 class="text-3xl font-bold text-gray-800 mb-6">Gerenciador de Tarefas</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="card p-6 space-y-6">
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4 text-gray-700">Adicionar Tarefa</h3>
+                            <form id="form-tarefa" class="space-y-4">
+                                <div><label for="tarefa-descricao" class="block text-sm font-medium text-gray-700">Descrição da Tarefa</label><input type="text" id="tarefa-descricao" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required></div>
+                                <div><label for="tarefa-responsavel" class="block text-sm font-medium text-gray-700">Responsável</label><select id="tarefa-responsavel" class="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3"></select></div>
+                                <div><label for="tarefa-pontos" class="block text-sm font-medium text-gray-700">Pontos</label><input type="number" id="tarefa-pontos" value="10" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required></div>
+                                <div><label class="block text-sm font-medium text-gray-700">Frequência</label><select id="tarefa-frequencia" class="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3"><option value="unica">Única</option><option value="diaria">Diária</option><option value="semanal">Semanal</option><option value="mensal">Mensal</option></select></div>
+                                <button type="submit" class="w-full btn btn-primary">Adicionar Tarefa</button>
+                            </form>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4 text-gray-700">Adicionar Participante</h3>
+                            <form id="form-participante" class="flex gap-2"><input type="text" id="participante-nome" placeholder="Nome da criança" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3" required><button type="submit" class="btn btn-secondary">Add</button></form>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Tarefas Pendentes</h3><div id="lista-tarefas-pendentes" class="space-y-3"></div></div>
+                        <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Quadro de Pontos</h3><div id="quadro-pontos" class="space-y-3"></div></div>
+                        <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Tarefas Concluídas</h3><div id="lista-tarefas-concluidas" class="space-y-3 max-h-48 overflow-y-auto"></div></div>
+                    </div>
+                </div>
             </section>
             
             <!-- Seção Autenticar (Admin) -->
@@ -202,12 +269,12 @@
     </div>
 
     <script type="module">
-        // Import Firebase modules
+        // Importar módulos do Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection, getDocs, query, limit, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // Your web app's Firebase configuration
+        // Configuração do Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBzasnYtePx93fALw277HePUrn4IkxFxew",
             authDomain: "casa-flow.firebaseapp.com",
@@ -217,30 +284,29 @@
             appId: "1:1056932151529:web:17dbcc30ec3f3c7ffbb078"
         };
         
-        const finalFirebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : firebaseConfig;
-
-        // Initialize Firebase
-        const app = initializeApp(finalFirebaseConfig);
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // --- GLOBAL APP STATE ---
+        // --- ESTADO GLOBAL DA APLICAÇÃO ---
         let financas = { transacoes: [], cartoes: [], parcelamentos: [] };
         let estoque = [];
-        let tarefas = [];
+        let tarefas = { participantes: [], tarefas: [] };
         let currentUser = null;
         let unsubscribeData;
+        let fluxoCaixaChart;
 
-        // --- UI ELEMENTS ---
+        // --- ELEMENTOS DA UI ---
         const authScreen = document.getElementById('auth-screen');
         const appContainer = document.getElementById('app-container');
         const loginContainer = document.getElementById('login-container');
         const signupContainer = document.getElementById('signup-container');
         const messageContainer = document.getElementById('message-container');
         
-        // --- AUTHENTICATION & USER MANAGEMENT ---
+        // --- AUTENTICAÇÃO E GESTÃO DE UTILIZADORES ---
         onAuthStateChanged(auth, async user => {
-            if (unsubscribeData) unsubscribeData(); // Unsubscribe from old listener
+            if (unsubscribeData) unsubscribeData(); 
             
             if (user) {
                 const userProfileRef = doc(db, "users", user.uid);
@@ -277,11 +343,9 @@
             appContainer.classList.remove('hidden');
             appContainer.classList.add('flex');
             
-            // Update UI with user info
             document.getElementById('user-email').textContent = user.email;
-            document.getElementById('user-role').textContent = user.role === 'admin' ? 'Administrador' : 'Usuário';
+            document.getElementById('user-role').textContent = user.role === 'admin' ? 'Administrador' : 'Utilizador';
 
-            // Show admin tab if user is admin
             const adminNav = document.getElementById('nav-autenticar');
             if (user.role === 'admin') {
                 adminNav.classList.remove('hidden');
@@ -291,25 +355,24 @@
                 adminNav.classList.add('hidden');
             }
 
-            // Listen for data changes
             const dataRef = doc(db, "appData", user.uid);
             unsubscribeData = onSnapshot(dataRef, (docSnap) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     financas = data.financas || { transacoes: [], cartoes: [], parcelamentos: [] };
                     estoque = data.estoque || [];
-                    tarefas = data.tarefas || [];
+                    tarefas = data.tarefas || { participantes: [], tarefas: [] };
                 } else {
-                    // First time, initialize empty data
+                    // Inicializar dados vazios se não existirem
                     financas = { transacoes: [], cartoes: [], parcelamentos: [] };
                     estoque = [];
-                    tarefas = [];
+                    tarefas = { participantes: [], tarefas: [] };
                 }
                 renderAll();
             });
         }
         
-        // --- ADMIN PANEL ---
+        // --- PAINEL DE ADMINISTRAÇÃO ---
         async function loadAdminUsers() {
             const usersRef = collection(db, "users");
             const usersSnapshot = await getDocs(usersRef);
@@ -326,10 +389,10 @@
 
             usersSnapshot.forEach(doc => {
                 const user = { id: doc.id, ...doc.data() };
-                if(user.id === currentUser.uid) return; // Don't show admin themselves
+                if(user.id === currentUser.uid) return; // Não mostrar o próprio admin
 
                 const userCard = document.createElement('div');
-                userCard.className = 'p-3 bg-gray-100 rounded-lg';
+                userCard.className = 'p-3 bg-gray-100 rounded-lg flex justify-between items-center';
                 
                 let buttons = '';
                 if(user.status === 'pending') {
@@ -340,50 +403,35 @@
                     buttons = `<button class="btn btn-secondary text-xs p-1" onclick="updateUserStatus('${user.id}', 'active')">Desbloquear</button>`;
                 }
 
-                userCard.innerHTML = `
-                    <p class="font-semibold truncate">${user.email}</p>
-                    <div class="flex justify-end mt-2">
-                        ${buttons}
-                    </div>
-                `;
+                userCard.innerHTML = `<p class="font-semibold truncate text-sm">${user.email}</p><div>${buttons}</div>`;
 
-                if (user.status === 'pending') {
-                    pendingUsersEl.appendChild(userCard);
-                    hasPending = true;
-                } else if (user.status === 'active') {
-                    activeUsersEl.appendChild(userCard);
-                    hasActive = true;
-                } else {
-                    blockedUsersEl.appendChild(userCard);
-                    hasBlocked = true;
-                }
+                if (user.status === 'pending') { pendingUsersEl.appendChild(userCard); hasPending = true; } 
+                else if (user.status === 'active') { activeUsersEl.appendChild(userCard); hasActive = true; } 
+                else { blockedUsersEl.appendChild(userCard); hasBlocked = true; }
             });
             
-            if(!hasPending) pendingUsersEl.innerHTML = `<p class="text-gray-500 text-sm">Nenhum usuário pendente.</p>`;
-            if(!hasActive) activeUsersEl.innerHTML = `<p class="text-gray-500 text-sm">Nenhum usuário ativo.</p>`;
-            if(!hasBlocked) blockedUsersEl.innerHTML = `<p class="text-gray-500 text-sm">Nenhum usuário bloqueado.</p>`;
+            if(!hasPending) pendingUsersEl.innerHTML = `<p class="text-gray-500 text-sm">Nenhum utilizador pendente.</p>`;
+            if(!hasActive) activeUsersEl.innerHTML = `<p class="text-gray-500 text-sm">Nenhum utilizador ativo.</p>`;
+            if(!hasBlocked) blockedUsersEl.innerHTML = `<p class="text-gray-500 text-sm">Nenhum utilizador bloqueado.</p>`;
         }
         
         window.updateUserStatus = async (uid, newStatus) => {
             const userRef = doc(db, "users", uid);
             await updateDoc(userRef, { status: newStatus });
-            loadAdminUsers(); // Refresh the list
+            loadAdminUsers();
         };
         
-        // --- UI & FORMS LOGIC ---
+        // --- LÓGICA DE UI E FORMULÁRIOS DE AUTENTICAÇÃO ---
         function showAuthScreen(screen, title = '', text = '') {
             appContainer.classList.add('hidden');
             authScreen.classList.remove('hidden');
-
             loginContainer.classList.add('hidden');
             signupContainer.classList.add('hidden');
             messageContainer.classList.add('hidden');
 
-            if (screen === 'login') {
-                loginContainer.classList.remove('hidden');
-            } else if (screen === 'signup') {
-                signupContainer.classList.remove('hidden');
-            } else if (screen === 'message') {
+            if (screen === 'login') { loginContainer.classList.remove('hidden'); }
+            else if (screen === 'signup') { signupContainer.classList.remove('hidden'); }
+            else if (screen === 'message') {
                 document.getElementById('message-title').textContent = title;
                 document.getElementById('message-text').textContent = text;
                 messageContainer.classList.remove('hidden');
@@ -414,7 +462,6 @@
             
             try {
                 errorEl.textContent = '';
-                // Check if any user exists to determine admin role
                 const usersQuery = query(collection(db, "users"), limit(1));
                 const querySnapshot = await getDocs(usersQuery);
                 const isFirstUser = querySnapshot.empty;
@@ -422,64 +469,333 @@
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
 
-                // Create user profile
+                // Criar perfil do utilizador
                 await setDoc(doc(db, "users", user.uid), {
                     email: user.email,
                     role: isFirstUser ? 'admin' : 'user',
                     status: isFirstUser ? 'active' : 'pending'
                 });
                 
-                // Create user data document
+                // Criar documento de dados do utilizador
                 await setDoc(doc(db, "appData", user.uid), {
                     financas: { transacoes: [], cartoes: [], parcelamentos: [] },
                     estoque: [],
-                    tarefas: []
+                    tarefas: { participantes: [{id: Date.now(), nome: 'Admin', pontos: 100}], tarefas: [] }
                 });
-                
-                // User will be handled by onAuthStateChanged after this
                 
             } catch (error) {
                  if (error.code === 'auth/email-already-in-use') {
                     errorEl.textContent = 'Este email já está em uso.';
                 } else {
+                    console.error("Signup error:", error);
                     errorEl.textContent = 'Ocorreu um erro no cadastro.';
                 }
             }
         });
 
-        const logout = () => {
-            signOut(auth);
-        };
+        const logout = () => { signOut(auth); };
         document.getElementById('logout-btn').addEventListener('click', logout);
         document.getElementById('message-logout-btn').addEventListener('click', logout);
 
-
-        // --- APPLICATION LOGIC (FINANÇAS, ESTOQUE, TAREFAS) ---
-        // (O código das seções Finanças, Estoque e Tarefas permanece aqui,
-        // mas as funções de salvar/carregar dados foram substituídas pela lógica do Firebase)
-
-        // The saveDataToFirebase function now updates the single document
         async function saveDataToFirebase() {
             if (!currentUser) return;
             try {
                 const dataRef = doc(db, "appData", currentUser.uid);
-                await setDoc(dataRef, { financas, estoque, tarefas });
+                // Usar 'update' em vez de 'set' para evitar sobrescrever o documento se ele ainda não foi lido
+                await updateDoc(dataRef, { financas, estoque, tarefas });
             } catch (error) {
                 console.error("Error saving data: ", error);
             }
         }
         
-        // Example of how a function is adapted:
-        window.deletarTransacao = (id) => { 
-            financas.transacoes = financas.transacoes.filter(t => t.id !== id);
-            saveDataToFirebase();
-        };
+        // --- FUNÇÕES DE RENDERIZAÇÃO ---
+        function renderAll() {
+            renderFinancas();
+            renderEstoque();
+            renderTarefas();
+        }
 
-        // --- INICIALIZAÇÃO ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // All initialization logic is now handled by onAuthStateChanged
+        const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0);
+
+        // --- LÓGICA DE FINANÇAS ---
+        function renderFinancas() {
+            // Lógica de cálculo
+            const agora = new Date();
+            const mesAtual = agora.getMonth();
+            const anoAtual = agora.getFullYear();
+
+            let saldo = 0;
+            let receitasMes = 0;
+            let despesasMes = 0;
+            let faturaCartoes = 0;
+
+            financas.transacoes.forEach(t => {
+                const dataTransacao = new Date(t.data);
+                if (t.tipo === 'receita') {
+                    saldo += t.valor;
+                    if(dataTransacao.getMonth() === mesAtual && dataTransacao.getFullYear() === anoAtual) receitasMes += t.valor;
+                } else {
+                    if (t.pagamento === 'saldo') {
+                        saldo -= t.valor;
+                    } else {
+                         if(dataTransacao.getMonth() === mesAtual && dataTransacao.getFullYear() === anoAtual) faturaCartoes += t.valor;
+                    }
+                    if(dataTransacao.getMonth() === mesAtual && dataTransacao.getFullYear() === anoAtual) despesasMes += t.valor;
+                }
+            });
+
+            document.getElementById('saldo-atual').textContent = formatCurrency(saldo);
+            document.getElementById('receitas-mes').textContent = formatCurrency(receitasMes);
+            document.getElementById('despesas-mes').textContent = formatCurrency(despesasMes);
+            document.getElementById('fatura-cartoes').textContent = formatCurrency(faturaCartoes);
+
+            // Renderizar listas e gráfico
+            renderListaTransacoes();
+            renderListaCartoes();
+            renderListaParcelamentos();
+            renderGraficoFluxoCaixa();
+        }
+        
+        function renderListaTransacoes() {
+            const listaEl = document.getElementById('lista-transacoes');
+            listaEl.innerHTML = '';
+            if (financas.transacoes.length === 0) {
+                listaEl.innerHTML = '<p class="text-gray-500 text-center">Nenhuma transação registada.</p>';
+                return;
+            }
+            [...financas.transacoes].sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 20).forEach(t => {
+                const item = document.createElement('div');
+                const isReceita = t.tipo === 'receita';
+                item.className = `flex justify-between items-center p-3 rounded-lg ${isReceita ? 'bg-green-50' : 'bg-red-50'}`;
+                item.innerHTML = `
+                    <div>
+                        <p class="font-semibold">${t.descricao}</p>
+                        <p class="text-xs text-gray-500">${new Date(t.data).toLocaleDateString()} - ${isReceita ? 'Origem: ' + (t.origem || '') : 'Pago com: ' + t.pagamento}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold ${isReceita ? 'text-green-600' : 'text-red-600'}">${isReceita ? '+' : '-'} ${formatCurrency(t.valor)}</p>
+                        <button class="text-xs text-gray-400 hover:text-red-500" onclick="deletarTransacao(${t.id})"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                `;
+                listaEl.appendChild(item);
+            });
+        }
+        
+        function renderListaCartoes() {
+            const listaEl = document.getElementById('lista-cartoes');
+            const selectPagamento = document.getElementById('pagamento');
+            listaEl.innerHTML = '';
+            // Limpar opções antigas, mantendo a primeira
+            while (selectPagamento.options.length > 1) {
+                selectPagamento.remove(1);
+            }
+
+            if (!financas.cartoes || financas.cartoes.length === 0) {
+                listaEl.innerHTML = '<p class="text-gray-500 text-sm text-center">Nenhum cartão adicionado.</p>';
+            } else {
+                financas.cartoes.forEach(c => {
+                    const item = document.createElement('div');
+                    item.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-md';
+                    item.innerHTML = `<span class="text-sm font-medium"><i class="fas fa-credit-card mr-2"></i>${c.nome}</span><button class="text-xs text-gray-400 hover:text-red-500" onclick="deletarCartao(${c.id})"><i class="fas fa-trash-alt"></i></button>`;
+                    listaEl.appendChild(item);
+
+                    const option = document.createElement('option');
+                    option.value = c.nome;
+                    option.textContent = c.nome;
+                    selectPagamento.appendChild(option);
+                });
+            }
+        }
+
+        function renderListaParcelamentos() {
+            const listaEl = document.getElementById('lista-parcelamentos');
+            listaEl.innerHTML = '';
+            if (!financas.parcelamentos || financas.parcelamentos.length === 0) {
+                listaEl.innerHTML = '<p class="text-gray-500 text-sm text-center">Nenhuma compra parcelada.</p>';
+                return;
+            }
+            financas.parcelamentos.forEach(p => {
+                const item = document.createElement('div');
+                const isQuitado = p.pagas >= p.totalParcelas;
+                item.className = `p-3 rounded-lg ${isQuitado ? 'bg-green-50' : 'bg-yellow-50'}`;
+                item.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="font-semibold">${p.descricao}</p>
+                            <p class="text-xs text-gray-600">${formatCurrency(p.valorParcela)}/mês</p>
+                        </div>
+                        <div class="text-right">
+                             <p class="text-sm font-bold ${isQuitado ? 'text-green-600' : 'text-yellow-700'}">${isQuitado ? 'Quitado' : `Parcela ${p.pagas}/${p.totalParcelas}`}</p>
+                            ${!isQuitado ? `<button class="text-xs btn btn-secondary mt-1 p-1" onclick="pagarParcela(${p.id})">Pagar Parcela</button>` : ''}
+                        </div>
+                    </div>
+                `;
+                listaEl.appendChild(item);
+            });
+        }
+        
+        function renderGraficoFluxoCaixa() {
+            const ctx = document.getElementById('fluxo-caixa-chart').getContext('2d');
+            const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            const receitasData = Array(12).fill(0);
+            const despesasData = Array(12).fill(0);
+
+            if (financas.transacoes) {
+                financas.transacoes.forEach(t => {
+                    const mes = new Date(t.data).getMonth();
+                    if (t.tipo === 'receita') receitasData[mes] += t.valor;
+                    else despesasData[mes] += t.valor;
+                });
+            }
+
+            if (fluxoCaixaChart) {
+                fluxoCaixaChart.data.datasets[0].data = receitasData;
+                fluxoCaixaChart.data.datasets[1].data = despesasData;
+                fluxoCaixaChart.update();
+            } else {
+                fluxoCaixaChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { label: 'Receitas', data: receitasData, backgroundColor: 'rgba(75, 192, 192, 0.6)' },
+                            { label: 'Despesas', data: despesasData, backgroundColor: 'rgba(255, 99, 132, 0.6)' }
+                        ]
+                    },
+                    options: { responsive: true, scales: { y: { beginAtZero: true } } }
+                });
+            }
+        }
+
+        // --- LÓGICA DE ESTOQUE ---
+        function renderEstoque() {
+            const listaEl = document.getElementById('lista-estoque');
+            listaEl.innerHTML = '';
+            if(!estoque || estoque.length === 0) {
+                listaEl.innerHTML = '<p class="text-gray-500 text-center">Nenhum item no estoque.</p>';
+                return;
+            }
+            [...estoque].sort((a,b) => a.nome.localeCompare(b.nome)).forEach(item => {
+                const isLow = item.qtd <= item.min;
+                const itemEl = document.createElement('div');
+                itemEl.className = `flex justify-between items-center p-3 rounded-lg ${isLow ? 'low-stock' : 'bg-gray-50'}`;
+                itemEl.innerHTML = `
+                    <div>
+                        <p class="font-semibold">${item.nome}</p>
+                        <p class="text-xs text-gray-500">Mínimo: ${item.min}</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button class="text-gray-500 hover:text-red-600" onclick="atualizarQtdItem(${item.id}, -1)"><i class="fas fa-minus-circle"></i></button>
+                        <span class="font-bold text-lg">${item.qtd}</span>
+                        <button class="text-gray-500 hover:text-green-600" onclick="atualizarQtdItem(${item.id}, 1)"><i class="fas fa-plus-circle"></i></button>
+                        <button class="ml-4 text-gray-400 hover:text-red-600" onclick="deletarItemEstoque(${item.id})"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                `;
+                listaEl.appendChild(itemEl);
+            });
+        }
+
+        // --- LÓGICA DE TAREFAS ---
+        function renderTarefas() {
+            renderParticipantes();
+            renderListaTarefas();
+            renderQuadroPontos();
+        }
+
+        function renderParticipantes() {
+            const selectEl = document.getElementById('tarefa-responsavel');
+            selectEl.innerHTML = '';
+            if (!tarefas.participantes || tarefas.participantes.length === 0) {
+                 selectEl.innerHTML = '<option disabled>Adicione um participante</option>';
+            } else {
+                tarefas.participantes.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.nome;
+                    option.textContent = p.nome;
+                    selectEl.appendChild(option);
+                });
+            }
+        }
+        
+        function renderListaTarefas() {
+            const pendentesEl = document.getElementById('lista-tarefas-pendentes');
+            const concluidasEl = document.getElementById('lista-tarefas-concluidas');
+            pendentesEl.innerHTML = '';
+            concluidasEl.innerHTML = '';
+
+            if (!tarefas.tarefas) {
+                tarefas.tarefas = [];
+            }
+
+            const tarefasPendentes = tarefas.tarefas.filter(t => t.status === 'pendente');
+            const tarefasConcluidas = [...tarefas.tarefas.filter(t => t.status !== 'pendente')].sort((a,b) => new Date(b.dataConclusao) - new Date(a.dataConclusao));
+
+            if (tarefasPendentes.length === 0) pendentesEl.innerHTML = '<p class="text-gray-500 text-center">Nenhuma tarefa pendente!</p>';
+            if (tarefasConcluidas.length === 0) concluidasEl.innerHTML = '<p class="text-gray-500 text-center">Nenhuma tarefa concluída ainda.</p>';
             
-            // Setup navigation
+            tarefasPendentes.forEach(t => {
+                const item = document.createElement('div');
+                item.className = 'bg-gray-50 p-3 rounded-lg';
+                item.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="font-semibold">${t.descricao}</p>
+                            <p class="text-xs text-gray-500">Para: ${t.responsavel} | Vale: ${t.pontos} pontos</p>
+                        </div>
+                        <div class="flex flex-col items-end gap-2">
+                             <div class="flex gap-2">
+                                <button class="btn btn-secondary text-xs p-1" onclick="concluirTarefa(${t.id}, true)">Feito!</button>
+                                <button class="btn btn-danger text-xs p-1" onclick="concluirTarefa(${t.id}, false)">Não Feito</button>
+                            </div>
+                            <button class="text-xs text-gray-400 hover:text-red-500" onclick="deletarTarefa(${t.id})"><i class="fas fa-trash-alt"></i> Deletar</button>
+                        </div>
+                    </div>
+                `;
+                pendentesEl.appendChild(item);
+            });
+            
+            tarefasConcluidas.slice(0, 10).forEach(t => {
+                const item = document.createElement('div');
+                const isFeita = t.status === 'feita';
+                item.className = `p-2 rounded-md ${isFeita ? 'bg-green-50' : 'bg-red-50'}`;
+                item.innerHTML = `<p class="text-sm"><i class="fas ${isFeita ? 'fa-check-circle text-green-500' : 'fa-times-circle text-red-500'} mr-2"></i>${t.descricao} <span class="text-xs text-gray-500">(${t.responsavel})</span></p>`;
+                concluidasEl.appendChild(item);
+            });
+        }
+        
+        function renderQuadroPontos() {
+            const quadroEl = document.getElementById('quadro-pontos');
+            quadroEl.innerHTML = '';
+            if (!tarefas.participantes || tarefas.participantes.length === 0) {
+                 quadroEl.innerHTML = '<p class="text-gray-500 text-center">Nenhum participante adicionado.</p>';
+                 return;
+            }
+            [...tarefas.participantes].sort((a,b) => b.pontos - a.pontos).forEach(p => {
+                const item = document.createElement('div');
+                item.className = 'flex justify-between items-center bg-indigo-50 p-3 rounded-lg';
+                item.innerHTML = `<p class="font-bold text-indigo-800">${p.nome}</p><p class="text-xl font-bold text-indigo-600">${p.pontos} pts</p>`;
+                quadroEl.appendChild(item);
+            });
+        }
+
+        // --- EVENT HANDLERS & FORM SUBMISSIONS ---
+        document.getElementById('form-transacao').addEventListener('submit', (e) => { e.preventDefault(); adicionarTransacao(); });
+        document.getElementById('form-cartao').addEventListener('submit', (e) => { e.preventDefault(); adicionarCartao(); });
+        document.getElementById('form-parcelamento').addEventListener('submit', (e) => { e.preventDefault(); adicionarParcelamento(); });
+        document.querySelectorAll('input[name="tipo"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const isDespesa = e.target.value === 'despesa';
+                document.getElementById('pagamento-container').classList.toggle('hidden', !isDespesa);
+                document.getElementById('origem-container').classList.toggle('hidden', isDespesa);
+            });
+        });
+
+        document.getElementById('form-estoque').addEventListener('submit', (e) => { e.preventDefault(); adicionarItemEstoque(); });
+        document.getElementById('form-tarefa').addEventListener('submit', (e) => { e.preventDefault(); adicionarTarefa(); });
+        document.getElementById('form-participante').addEventListener('submit', (e) => { e.preventDefault(); adicionarParticipante(); });
+
+        // --- INICIALIZAÇÃO DA APLICAÇÃO ---
+        document.addEventListener('DOMContentLoaded', () => {
             const navLinks = document.querySelectorAll('.nav-link');
             const pages = document.querySelectorAll('.page');
             function showPage(pageId) {
@@ -487,6 +803,7 @@
                 document.getElementById(pageId).classList.remove('hidden');
                 navLinks.forEach(link => link.classList.remove('nav-active'));
                 document.getElementById(`nav-${pageId}`).classList.add('nav-active');
+                 if(pageId === 'autenticar' && currentUser?.role === 'admin') loadAdminUsers();
             }
             navLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
@@ -495,13 +812,159 @@
                     showPage(pageId);
                 });
             });
-            showPage('financas');
+            showPage('financas'); // Página inicial
         });
 
-        // Placeholder for the rest of the application logic
-        function renderAll() { console.log("Rendering all data views..."); }
+        // --- Funções de Ação (CRUD) ---
+        function adicionarTransacao() {
+            const tipo = document.querySelector('input[name="tipo"]:checked').value;
+            const descricao = document.getElementById('descricao').value;
+            const valor = parseFloat(document.getElementById('valor').value);
+            const origem = document.getElementById('origem').value;
+            const pagamento = document.getElementById('pagamento').value;
+
+            if (!descricao || !valor) return;
+            
+            const transacao = {
+                id: Date.now(),
+                data: new Date().toISOString(),
+                tipo,
+                descricao,
+                valor,
+                origem: tipo === 'receita' ? origem : null,
+                pagamento: tipo === 'despesa' ? pagamento : null,
+            };
+            financas.transacoes.push(transacao);
+            document.getElementById('form-transacao').reset();
+            saveDataToFirebase();
+        }
+
+        window.deletarTransacao = (id) => {
+            financas.transacoes = financas.transacoes.filter(t => t.id !== id);
+            saveDataToFirebase();
+        };
+
+        function adicionarCartao() {
+            const nome = document.getElementById('nome-cartao').value;
+            if(!nome) return;
+            const cartao = { id: Date.now(), nome };
+            if (!financas.cartoes) financas.cartoes = [];
+            financas.cartoes.push(cartao);
+            document.getElementById('form-cartao').reset();
+            saveDataToFirebase();
+        }
+
+        window.deletarCartao = (id) => {
+            financas.cartoes = financas.cartoes.filter(c => c.id !== id);
+            saveDataToFirebase();
+        };
+
+        function adicionarParcelamento() {
+            const descricao = document.getElementById('parcela-descricao').value;
+            const valorTotal = parseFloat(document.getElementById('parcela-valor').value);
+            const totalParcelas = parseInt(document.getElementById('parcela-numero').value);
+            if (!descricao || !valorTotal || !totalParcelas) return;
+            
+            const parcelamento = {
+                id: Date.now(),
+                descricao,
+                valorTotal,
+                totalParcelas,
+                pagas: 0,
+                valorParcela: valorTotal / totalParcelas,
+            };
+            if (!financas.parcelamentos) financas.parcelamentos = [];
+            financas.parcelamentos.push(parcelamento);
+            document.getElementById('form-parcelamento').reset();
+            saveDataToFirebase();
+        }
+
+        window.pagarParcela = (id) => {
+            const parcelamento = financas.parcelamentos.find(p => p.id === id);
+            if (parcelamento && parcelamento.pagas < parcelamento.totalParcelas) {
+                parcelamento.pagas++;
+                const transacao = {
+                    id: Date.now(),
+                    data: new Date().toISOString(),
+                    tipo: 'despesa',
+                    descricao: `Parcela ${parcelamento.pagas}/${parcelamento.totalParcelas} - ${parcelamento.descricao}`,
+                    valor: parcelamento.valorParcela,
+                    pagamento: 'saldo',
+                };
+                financas.transacoes.push(transacao);
+                saveDataToFirebase();
+            }
+        };
+
+        function adicionarItemEstoque() {
+            const nome = document.getElementById('item-nome').value;
+            const qtd = parseInt(document.getElementById('item-qtd').value);
+            const min = parseInt(document.getElementById('item-min').value);
+            if (!nome || isNaN(qtd) || isNaN(min)) return;
+            const item = { id: Date.now(), nome, qtd, min };
+            if (!estoque) estoque = [];
+            estoque.push(item);
+            document.getElementById('form-estoque').reset();
+            saveDataToFirebase();
+        }
+
+        window.deletarItemEstoque = (id) => {
+            estoque = estoque.filter(i => i.id !== id);
+            saveDataToFirebase();
+        }
+
+        window.atualizarQtdItem = (id, mudanca) => {
+            const item = estoque.find(i => i.id === id);
+            if (item && (item.qtd + mudanca >= 0)) {
+                item.qtd += mudanca;
+                saveDataToFirebase();
+            }
+        }
         
+        function adicionarParticipante() {
+            const nome = document.getElementById('participante-nome').value;
+            if(!nome) return;
+            const participante = { id: Date.now(), nome, pontos: 100 };
+            if (!tarefas.participantes) tarefas.participantes = [];
+            tarefas.participantes.push(participante);
+            document.getElementById('form-participante').reset();
+            saveDataToFirebase();
+        }
+
+        function adicionarTarefa() {
+            const descricao = document.getElementById('tarefa-descricao').value;
+            const responsavel = document.getElementById('tarefa-responsavel').value;
+            const pontos = parseInt(document.getElementById('tarefa-pontos').value);
+            const frequencia = document.getElementById('tarefa-frequencia').value;
+            if (!descricao || !responsavel || isNaN(pontos)) return;
+
+            const tarefa = { id: Date.now(), descricao, responsavel, pontos, frequencia, status: 'pendente', dataCriacao: new Date().toISOString() };
+            if (!tarefas.tarefas) tarefas.tarefas = [];
+            tarefas.tarefas.push(tarefa);
+            document.getElementById('form-tarefa').reset();
+            saveDataToFirebase();
+        }
+
+        window.deletarTarefa = (id) => {
+            tarefas.tarefas = tarefas.tarefas.filter(t => t.id !== id);
+            saveDataToFirebase();
+        }
+        
+        window.concluirTarefa = (id, foiFeita) => {
+            const tarefa = tarefas.tarefas.find(t => t.id === id);
+            const participante = tarefas.participantes.find(p => p.nome === tarefa.responsavel);
+            if (tarefa && participante) {
+                tarefa.status = foiFeita ? 'feita' : 'nao-feita';
+                tarefa.dataConclusao = new Date().toISOString();
+                
+                if(foiFeita) {
+                    participante.pontos += tarefa.pontos;
+                } else {
+                    participante.pontos -= tarefa.pontos;
+                }
+                saveDataToFirebase();
+            }
+        }
     </script>
 </body>
 </html>
-
