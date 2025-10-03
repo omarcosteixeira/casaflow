@@ -62,67 +62,9 @@
     </style>
 </head>
 <body class="h-screen">
-
-    <!-- Tela de Login/Cadastro -->
-    <div id="auth-screen" class="flex items-center justify-center min-h-screen bg-gray-100">
-        <div class="w-full max-w-md">
-            <div id="login-container">
-                <form id="form-login" class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
-                    <div class="mb-6 text-center">
-                        <i class="fas fa-house-user text-5xl text-indigo-600"></i>
-                        <h1 class="text-3xl font-bold mt-2 text-gray-800">Bem-vindo ao Casa Flow</h1>
-                        <p class="text-gray-500">Faça login para continuar</p>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="login-email">Email</label>
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="login-email" type="email" placeholder="seu@email.com" required>
-                    </div>
-                    <div class="mb-6">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="login-password">Senha</label>
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="login-password" type="password" placeholder="******************" required>
-                    </div>
-                     <p id="login-error" class="text-red-500 text-xs italic mb-4 text-center"></p>
-                    <div class="flex items-center justify-between">
-                        <button class="btn btn-primary w-full" type="submit">Entrar</button>
-                    </div>
-                    <p class="text-center text-gray-500 text-xs mt-6">
-                        Não tem uma conta? <a href="#" id="show-signup" class="text-indigo-600 hover:text-indigo-800">Cadastre-se</a>
-                    </p>
-                </form>
-            </div>
-            <div id="signup-container" class="hidden">
-                 <form id="form-signup" class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
-                    <div class="mb-6 text-center">
-                         <h1 class="text-3xl font-bold text-gray-800">Crie sua Conta</h1>
-                         <p class="text-gray-500">Rápido e fácil</p>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="signup-email">Email</label>
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" id="signup-email" type="email" placeholder="Email" required>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="signup-password">Senha</label>
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" id="signup-password" type="password" placeholder="******************" required>
-                    </div>
-                     <p id="signup-error" class="text-red-500 text-xs italic mb-4 text-center"></p>
-                    <div class="flex items-center justify-between">
-                        <button class="btn btn-primary w-full" type="submit">Cadastrar</button>
-                    </div>
-                     <p class="text-center text-gray-500 text-xs mt-6">
-                        Já tem uma conta? <a href="#" id="show-login" class="text-indigo-600 hover:text-indigo-800">Faça Login</a>
-                    </p>
-                </form>
-            </div>
-             <div id="message-container" class="hidden text-center bg-white p-8 rounded-lg shadow-md">
-                 <h2 id="message-title" class="text-2xl font-bold text-gray-800"></h2>
-                 <p id="message-text" class="text-gray-600 mt-2"></p>
-                 <button id="message-logout-btn" class="btn btn-primary mt-6">OK, Sair</button>
-            </div>
-        </div>
-    </div>
     
-    <!-- Aplicação Principal (oculta por padrão) -->
-    <div id="app-container" class="hidden h-screen w-full flex">
+    <!-- Aplicação Principal -->
+    <div id="app-container" class="h-screen w-full flex">
         <!-- Sidebar de Navegação -->
         <aside class="w-20 md:w-64 bg-white shadow-md flex flex-col items-center md:items-start p-4 space-y-6">
             <div class="flex items-center justify-center w-full mb-6">
@@ -142,21 +84,7 @@
                     <i class="fas fa-tasks w-8 text-center text-xl"></i>
                     <span class="hidden md:block ml-4 font-semibold">Tarefas</span>
                 </a>
-                <a href="#" id="nav-autenticar" class="nav-link hidden flex items-center justify-center md:justify-start p-3 rounded-lg text-gray-600 hover:bg-indigo-100">
-                    <i class="fas fa-user-check w-8 text-center text-xl"></i>
-                    <span class="hidden md:block ml-4 font-semibold">Autenticar</span>
-                </a>
             </nav>
-            <div class="mt-auto w-full">
-                 <div id="auth-status" class="hidden md:flex flex-col text-center text-xs text-gray-500 p-2 border-t">
-                     <span id="user-email" class="font-semibold truncate"></span>
-                     <span id="user-role" class="text-indigo-500"></span>
-                 </div>
-                 <button id="logout-btn" class="w-full btn bg-red-500 text-white hover:bg-red-600 flex items-center justify-center md:justify-start p-3">
-                    <i class="fas fa-sign-out-alt w-8 text-center text-xl"></i>
-                    <span class="hidden md:block ml-4 font-semibold">Sair</span>
-                 </button>
-            </div>
         </aside>
 
         <!-- Conteúdo Principal -->
@@ -243,36 +171,14 @@
                     </div>
                 </div>
             </section>
-            
-            <!-- Seção Autenticar (Admin) -->
-            <section id="autenticar" class="page hidden">
-                <h2 class="text-3xl font-bold text-gray-800 mb-6">Gerenciamento de Usuários</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Usuários Pendentes -->
-                    <div class="card p-6">
-                        <h3 class="text-xl font-semibold text-yellow-600 mb-4">Pendentes de Aprovação</h3>
-                        <div id="pending-users" class="space-y-3"></div>
-                    </div>
-                     <!-- Usuários Ativos -->
-                    <div class="card p-6">
-                        <h3 class="text-xl font-semibold text-green-600 mb-4">Usuários Ativos</h3>
-                        <div id="active-users" class="space-y-3"></div>
-                    </div>
-                     <!-- Usuários Bloqueados -->
-                    <div class="card p-6">
-                        <h3 class="text-xl font-semibold text-red-600 mb-4">Usuários Bloqueados</h3>
-                        <div id="blocked-users" class="space-y-3"></div>
-                    </div>
-                </div>
-            </section>
         </main>
     </div>
 
     <script type="module">
         // Importar módulos do Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection, getDocs, query, limit, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // Configuração do Firebase
         const firebaseConfig = {
@@ -296,222 +202,71 @@
         let currentUser = null;
         let unsubscribeData;
         let fluxoCaixaChart;
-
-        // --- ELEMENTOS DA UI ---
-        const authScreen = document.getElementById('auth-screen');
-        const appContainer = document.getElementById('app-container');
-        const loginContainer = document.getElementById('login-container');
-        const signupContainer = document.getElementById('signup-container');
-        const messageContainer = document.getElementById('message-container');
         
-        // --- AUTENTICAÇÃO E GESTÃO DE UTILIZADORES ---
-        onAuthStateChanged(auth, async user => {
-            if (unsubscribeData) unsubscribeData(); 
-            
+        // --- AUTENTICAÇÃO E INICIALIZAÇÃO ---
+        onAuthStateChanged(auth, user => {
             if (user) {
-                const userProfileRef = doc(db, "users", user.uid);
-                const userProfileSnap = await getDoc(userProfileRef);
-
-                if (userProfileSnap.exists()) {
-                    currentUser = { uid: user.uid, email: user.email, ...userProfileSnap.data() };
-                    handleUserStatus(currentUser);
-                }
+                // Utilizador está logado anonimamente.
+                currentUser = user;
+                initializeAppForUser(user);
             } else {
-                currentUser = null;
-                showAuthScreen('login');
+                // Nenhum utilizador, fazer login anónimo.
+                signInAnonymously(auth).catch(error => {
+                    console.error("Falha no login anónimo:", error);
+                });
             }
         });
         
-        function handleUserStatus(user) {
-            switch(user.status) {
-                case 'active':
-                    initializeAppForUser(user);
-                    break;
-                case 'pending':
-                    showAuthScreen('message', 'Aguardando Aprovação', 'Sua conta foi criada e está aguardando a aprovação de um administrador.');
-                    break;
-                case 'blocked':
-                    showAuthScreen('message', 'Conta Bloqueada', 'Sua conta foi bloqueada. Entre em contato com o administrador.');
-                    break;
-                default:
-                    showAuthScreen('login');
-            }
-        }
-        
-        function initializeAppForUser(user) {
-            authScreen.classList.add('hidden');
-            appContainer.classList.remove('hidden');
-            appContainer.classList.add('flex');
-            
-            document.getElementById('user-email').textContent = user.email;
-            document.getElementById('user-role').textContent = user.role === 'admin' ? 'Administrador' : 'Utilizador';
-
-            const adminNav = document.getElementById('nav-autenticar');
-            if (user.role === 'admin') {
-                adminNav.classList.remove('hidden');
-                adminNav.classList.add('flex');
-                loadAdminUsers();
-            } else {
-                adminNav.classList.add('hidden');
-            }
+        async function initializeAppForUser(user) {
+            if (unsubscribeData) unsubscribeData();
 
             const dataRef = doc(db, "appData", user.uid);
+            
+            // Garante que o documento do utilizador existe antes de escutar
+            try {
+                const docSnap = await getDoc(dataRef);
+                if (!docSnap.exists()) {
+                    // Documento não existe, vamos criá-lo com dados iniciais vazios
+                    await setDoc(dataRef, {
+                        financas: { transacoes: [], cartoes: [], parcelamentos: [] },
+                        estoque: [],
+                        tarefas: { participantes: [], tarefas: [] }
+                    });
+                }
+            } catch (error) {
+                console.error("Erro ao inicializar dados do utilizador:", error);
+                return; // Se houver um erro aqui (talvez permissões), não podemos continuar
+            }
+
             unsubscribeData = onSnapshot(dataRef, (docSnap) => {
+                // Agora, o documento deve sempre existir
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     financas = data.financas || { transacoes: [], cartoes: [], parcelamentos: [] };
                     estoque = data.estoque || [];
                     tarefas = data.tarefas || { participantes: [], tarefas: [] };
                 } else {
-                    // Inicializar dados vazios se não existirem
+                     // Este 'else' é agora uma salvaguarda, não deve ser alcançado
+                    console.warn("Documento do utilizador não encontrado após a inicialização.");
                     financas = { transacoes: [], cartoes: [], parcelamentos: [] };
                     estoque = [];
                     tarefas = { participantes: [], tarefas: [] };
                 }
                 renderAll();
+            }, error => {
+                // Adicionar um manipulador de erro ao onSnapshot para depuração
+                console.error("Erro no listener do Snapshot:", error);
             });
         }
         
-        // --- PAINEL DE ADMINISTRAÇÃO ---
-        async function loadAdminUsers() {
-            const usersRef = collection(db, "users");
-            const usersSnapshot = await getDocs(usersRef);
-            
-            const pendingUsersEl = document.getElementById('pending-users');
-            const activeUsersEl = document.getElementById('active-users');
-            const blockedUsersEl = document.getElementById('blocked-users');
-
-            pendingUsersEl.innerHTML = '';
-            activeUsersEl.innerHTML = '';
-            blockedUsersEl.innerHTML = '';
-            
-            let hasPending = false, hasActive = false, hasBlocked = false;
-
-            usersSnapshot.forEach(doc => {
-                const user = { id: doc.id, ...doc.data() };
-                if(user.id === currentUser.uid) return; // Não mostrar o próprio admin
-
-                const userCard = document.createElement('div');
-                userCard.className = 'p-3 bg-gray-100 rounded-lg flex justify-between items-center';
-                
-                let buttons = '';
-                if(user.status === 'pending') {
-                    buttons = `<button class="btn btn-secondary text-xs p-1" onclick="updateUserStatus('${user.id}', 'active')">Aprovar</button>`;
-                } else if (user.status === 'active') {
-                    buttons = `<button class="btn btn-danger text-xs p-1" onclick="updateUserStatus('${user.id}', 'blocked')">Bloquear</button>`;
-                } else if (user.status === 'blocked') {
-                    buttons = `<button class="btn btn-secondary text-xs p-1" onclick="updateUserStatus('${user.id}', 'active')">Desbloquear</button>`;
-                }
-
-                userCard.innerHTML = `<p class="font-semibold truncate text-sm">${user.email}</p><div>${buttons}</div>`;
-
-                if (user.status === 'pending') { pendingUsersEl.appendChild(userCard); hasPending = true; } 
-                else if (user.status === 'active') { activeUsersEl.appendChild(userCard); hasActive = true; } 
-                else { blockedUsersEl.appendChild(userCard); hasBlocked = true; }
-            });
-            
-            if(!hasPending) pendingUsersEl.innerHTML = `<p class="text-gray-500 text-sm">Nenhum utilizador pendente.</p>`;
-            if(!hasActive) activeUsersEl.innerHTML = `<p class="text-gray-500 text-sm">Nenhum utilizador ativo.</p>`;
-            if(!hasBlocked) blockedUsersEl.innerHTML = `<p class="text-gray-500 text-sm">Nenhum utilizador bloqueado.</p>`;
-        }
-        
-        window.updateUserStatus = async (uid, newStatus) => {
-            const userRef = doc(db, "users", uid);
-            await updateDoc(userRef, { status: newStatus });
-            loadAdminUsers();
-        };
-        
-        // --- LÓGICA DE UI E FORMULÁRIOS DE AUTENTICAÇÃO ---
-        function showAuthScreen(screen, title = '', text = '') {
-            appContainer.classList.add('hidden');
-            authScreen.classList.remove('hidden');
-            loginContainer.classList.add('hidden');
-            signupContainer.classList.add('hidden');
-            messageContainer.classList.add('hidden');
-
-            if (screen === 'login') { loginContainer.classList.remove('hidden'); }
-            else if (screen === 'signup') { signupContainer.classList.remove('hidden'); }
-            else if (screen === 'message') {
-                document.getElementById('message-title').textContent = title;
-                document.getElementById('message-text').textContent = text;
-                messageContainer.classList.remove('hidden');
-            }
-        }
-        
-        document.getElementById('show-signup').addEventListener('click', (e) => { e.preventDefault(); showAuthScreen('signup'); });
-        document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); showAuthScreen('login'); });
-        
-        document.getElementById('form-login').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            const errorEl = document.getElementById('login-error');
-            try {
-                errorEl.textContent = '';
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (error) {
-                errorEl.textContent = 'Email ou senha inválidos.';
-            }
-        });
-        
-        document.getElementById('form-signup').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('signup-email').value;
-            const password = document.getElementById('signup-password').value;
-            const errorEl = document.getElementById('signup-error');
-            
-            try {
-                errorEl.textContent = '';
-                const usersQuery = query(collection(db, "users"), limit(1));
-                const querySnapshot = await getDocs(usersQuery);
-                const isFirstUser = querySnapshot.empty;
-
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-                
-                const role = isFirstUser ? 'admin' : 'user';
-                const status = isFirstUser ? 'active' : 'pending';
-
-                // Criar perfil do utilizador
-                await setDoc(doc(db, "users", user.uid), {
-                    email: user.email,
-                    role: role,
-                    status: status
-                });
-                
-                // Criar documento de dados do utilizador
-                await setDoc(doc(db, "appData", user.uid), {
-                    financas: { transacoes: [], cartoes: [], parcelamentos: [] },
-                    estoque: [],
-                    tarefas: { participantes: [{id: Date.now(), nome: 'Admin', pontos: 100}], tarefas: [] }
-                });
-
-                // Chamar manualmente o status handler para evitar race condition com onAuthStateChanged
-                const userProfile = { uid: user.uid, email: user.email, role, status };
-                handleUserStatus(userProfile);
-                
-            } catch (error) {
-                 if (error.code === 'auth/email-already-in-use') {
-                    errorEl.textContent = 'Este email já está em uso.';
-                } else {
-                    console.error("Signup error:", error);
-                    errorEl.textContent = 'Ocorreu um erro no cadastro.';
-                }
-            }
-        });
-
-        const logout = () => { signOut(auth); };
-        document.getElementById('logout-btn').addEventListener('click', logout);
-        document.getElementById('message-logout-btn').addEventListener('click', logout);
-
         async function saveDataToFirebase() {
             if (!currentUser) return;
             try {
                 const dataRef = doc(db, "appData", currentUser.uid);
-                // Usar 'update' para atualizar o documento existente
-                await updateDoc(dataRef, { financas, estoque, tarefas });
+                // setDoc com merge: cria o documento se não existir, ou atualiza se já existir.
+                await setDoc(dataRef, { financas, estoque, tarefas }, { merge: true });
             } catch (error) {
-                console.error("Error saving data: ", error);
+                console.error("Erro ao salvar dados: ", error);
             }
         }
         
@@ -804,7 +559,6 @@
                 document.getElementById(pageId).classList.remove('hidden');
                 navLinks.forEach(link => link.classList.remove('nav-active'));
                 document.getElementById(`nav-${pageId}`).classList.add('nav-active');
-                 if(pageId === 'autenticar' && currentUser?.role === 'admin') loadAdminUsers();
             }
             navLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
