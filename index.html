@@ -468,12 +468,15 @@
 
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
+                
+                const role = isFirstUser ? 'admin' : 'user';
+                const status = isFirstUser ? 'active' : 'pending';
 
                 // Criar perfil do utilizador
                 await setDoc(doc(db, "users", user.uid), {
                     email: user.email,
-                    role: isFirstUser ? 'admin' : 'user',
-                    status: isFirstUser ? 'active' : 'pending'
+                    role: role,
+                    status: status
                 });
                 
                 // Criar documento de dados do utilizador
@@ -482,6 +485,10 @@
                     estoque: [],
                     tarefas: { participantes: [{id: Date.now(), nome: 'Admin', pontos: 100}], tarefas: [] }
                 });
+
+                // Chamar manualmente o status handler para evitar race condition com onAuthStateChanged
+                const userProfile = { uid: user.uid, email: user.email, role, status };
+                handleUserStatus(userProfile);
                 
             } catch (error) {
                  if (error.code === 'auth/email-already-in-use') {
@@ -501,7 +508,7 @@
             if (!currentUser) return;
             try {
                 const dataRef = doc(db, "appData", currentUser.uid);
-                // Usar 'update' em vez de 'set' para evitar sobrescrever o documento se ele ainda não foi lido
+                // Usar 'update' para atualizar o documento existente
                 await updateDoc(dataRef, { financas, estoque, tarefas });
             } catch (error) {
                 console.error("Error saving data: ", error);
@@ -519,37 +526,34 @@
 
         // --- LÓGICA DE FINANÇAS ---
         function renderFinancas() {
-            // Lógica de cálculo
             const agora = new Date();
             const mesAtual = agora.getMonth();
             const anoAtual = agora.getFullYear();
 
-            let saldo = 0;
-            let receitasMes = 0;
-            let despesasMes = 0;
-            let faturaCartoes = 0;
-
-            financas.transacoes.forEach(t => {
-                const dataTransacao = new Date(t.data);
-                if (t.tipo === 'receita') {
-                    saldo += t.valor;
-                    if(dataTransacao.getMonth() === mesAtual && dataTransacao.getFullYear() === anoAtual) receitasMes += t.valor;
-                } else {
-                    if (t.pagamento === 'saldo') {
-                        saldo -= t.valor;
+            let saldo = 0, receitasMes = 0, despesasMes = 0, faturaCartoes = 0;
+            
+            if(financas && financas.transacoes) {
+                financas.transacoes.forEach(t => {
+                    const dataTransacao = new Date(t.data);
+                    if (t.tipo === 'receita') {
+                        saldo += t.valor;
+                        if(dataTransacao.getMonth() === mesAtual && dataTransacao.getFullYear() === anoAtual) receitasMes += t.valor;
                     } else {
-                         if(dataTransacao.getMonth() === mesAtual && dataTransacao.getFullYear() === anoAtual) faturaCartoes += t.valor;
+                        if (t.pagamento === 'saldo') {
+                            saldo -= t.valor;
+                        } else {
+                            if(dataTransacao.getMonth() === mesAtual && dataTransacao.getFullYear() === anoAtual) faturaCartoes += t.valor;
+                        }
+                        if(dataTransacao.getMonth() === mesAtual && dataTransacao.getFullYear() === anoAtual) despesasMes += t.valor;
                     }
-                    if(dataTransacao.getMonth() === mesAtual && dataTransacao.getFullYear() === anoAtual) despesasMes += t.valor;
-                }
-            });
+                });
+            }
 
             document.getElementById('saldo-atual').textContent = formatCurrency(saldo);
             document.getElementById('receitas-mes').textContent = formatCurrency(receitasMes);
             document.getElementById('despesas-mes').textContent = formatCurrency(despesasMes);
             document.getElementById('fatura-cartoes').textContent = formatCurrency(faturaCartoes);
 
-            // Renderizar listas e gráfico
             renderListaTransacoes();
             renderListaCartoes();
             renderListaParcelamentos();
@@ -559,7 +563,7 @@
         function renderListaTransacoes() {
             const listaEl = document.getElementById('lista-transacoes');
             listaEl.innerHTML = '';
-            if (financas.transacoes.length === 0) {
+            if (!financas.transacoes || financas.transacoes.length === 0) {
                 listaEl.innerHTML = '<p class="text-gray-500 text-center">Nenhuma transação registada.</p>';
                 return;
             }
@@ -585,7 +589,6 @@
             const listaEl = document.getElementById('lista-cartoes');
             const selectPagamento = document.getElementById('pagamento');
             listaEl.innerHTML = '';
-            // Limpar opções antigas, mantendo a primeira
             while (selectPagamento.options.length > 1) {
                 selectPagamento.remove(1);
             }
@@ -723,9 +726,7 @@
             pendentesEl.innerHTML = '';
             concluidasEl.innerHTML = '';
 
-            if (!tarefas.tarefas) {
-                tarefas.tarefas = [];
-            }
+            if (!tarefas.tarefas) tarefas.tarefas = [];
 
             const tarefasPendentes = tarefas.tarefas.filter(t => t.status === 'pendente');
             const tarefasConcluidas = [...tarefas.tarefas.filter(t => t.status !== 'pendente')].sort((a,b) => new Date(b.dataConclusao) - new Date(a.dataConclusao));
@@ -968,3 +969,4 @@
     </script>
 </body>
 </html>
+
