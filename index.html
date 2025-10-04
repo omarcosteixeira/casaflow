@@ -673,19 +673,33 @@
         document.addEventListener('DOMContentLoaded', () => {
             const navLinks = document.querySelectorAll('.nav-link');
             const pages = document.querySelectorAll('.page');
-            function showPage(pageId) {
+
+            function showPage(pageIdToShow) {
+                // Esconde todas as páginas e depois mostra a correta
                 pages.forEach(page => page.classList.add('hidden'));
-                document.getElementById(pageId).classList.remove('hidden');
+                const pageToShowElement = document.getElementById(pageIdToShow);
+                if (pageToShowElement) {
+                    pageToShowElement.classList.remove('hidden');
+                }
+
+                // Desativa todos os links e depois ativa o correto
                 navLinks.forEach(link => link.classList.remove('nav-active'));
-                document.getElementById(`nav-${pageId.replace('_', '-')}`).classList.add('nav-active');
+                const linkToActivate = document.getElementById(`nav-${pageIdToShow}`);
+                if (linkToActivate) {
+                    linkToActivate.classList.add('nav-active');
+                }
             }
+
             navLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    const pageId = link.id.substring(4).replace('-', '_');
+                    // O ID da página é o ID do link sem o prefixo "nav-"
+                    const pageId = link.id.substring(4);
                     showPage(pageId);
                 });
             });
+
+            // Mostra a página inicial ao carregar
             showPage('financas');
         });
         
