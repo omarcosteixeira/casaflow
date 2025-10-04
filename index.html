@@ -59,6 +59,10 @@
             background-color: #fefce8;
             border-left: 4px solid var(--warning-color);
         }
+        .upcoming-event {
+            background-color: #ebf4ff;
+            border-left: 4px solid #3b82f6;
+        }
     </style>
 </head>
 <body class="h-screen">
@@ -132,9 +136,17 @@
                     <i class="fas fa-boxes-stacked w-8 text-center text-xl"></i>
                     <span class="hidden md:block ml-4 font-semibold">Estoque</span>
                 </a>
-                <a href="#" id="nav-tarefas" class="nav-link flex items-center justify-center md:justify-start p-3 rounded-lg text-gray-600 hover:bg-indigo-100">
-                    <i class="fas fa-tasks w-8 text-center text-xl"></i>
-                    <span class="hidden md:block ml-4 font-semibold">Tarefas</span>
+                <a href="#" id="nav-agenda" class="nav-link flex items-center justify-center md:justify-start p-3 rounded-lg text-gray-600 hover:bg-indigo-100">
+                    <i class="fas fa-calendar-alt w-8 text-center text-xl"></i>
+                    <span class="hidden md:block ml-4 font-semibold">Agenda</span>
+                </a>
+                 <a href="#" id="nav-tarefas-casa" class="nav-link flex items-center justify-center md:justify-start p-3 rounded-lg text-gray-600 hover:bg-indigo-100">
+                    <i class="fas fa-broom w-8 text-center text-xl"></i>
+                    <span class="hidden md:block ml-4 font-semibold">Tarefas da Casa</span>
+                </a>
+                <a href="#" id="nav-tarefas-infantis" class="nav-link flex items-center justify-center md:justify-start p-3 rounded-lg text-gray-600 hover:bg-indigo-100">
+                    <i class="fas fa-gamepad w-8 text-center text-xl"></i>
+                    <span class="hidden md:block ml-4 font-semibold">Tarefas Infantis</span>
                 </a>
             </nav>
             <div class="w-full flex flex-col items-center md:items-stretch">
@@ -150,99 +162,86 @@
 
             <!-- Seção Finanças -->
             <section id="financas" class="page">
-                <div class="flex justify-between items-center mb-6">
+                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-3xl font-bold text-gray-800">Painel Financeiro</h2>
                     <div class="flex items-center gap-4 card p-2">
-                        <button id="prev-month" class="text-gray-600 hover:text-indigo-600 text-xl px-2"><i class="fas fa-chevron-left"></i></button>
-                        <h3 id="current-month-display" class="text-xl font-semibold text-gray-700 w-48 text-center"></h3>
-                        <button id="next-month" class="text-gray-600 hover:text-indigo-600 text-xl px-2"><i class="fas fa-chevron-right"></i></button>
+                        <button id="prev-month-financas" class="text-gray-600 hover:text-indigo-600 text-xl px-2"><i class="fas fa-chevron-left"></i></button>
+                        <h3 id="current-month-display-financas" class="text-xl font-semibold text-gray-700 w-48 text-center"></h3>
+                        <button id="next-month-financas" class="text-gray-600 hover:text-indigo-600 text-xl px-2"><i class="fas fa-chevron-right"></i></button>
                     </div>
                 </div>
-
-                <!-- Resumo Cards -->
+                 <!-- Resumo Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                     <div class="card p-6 flex items-center"><div class="bg-blue-100 p-4 rounded-full mr-4"><i class="fas fa-balance-scale text-2xl text-blue-600"></i></div><div><p class="text-gray-500 text-sm">Saldo Atual</p><p id="saldo-atual" class="text-2xl font-bold text-gray-800">R$ 0,00</p></div></div>
                     <div class="card p-6 flex items-center"><div class="bg-green-100 p-4 rounded-full mr-4"><i class="fas fa-arrow-up text-2xl text-green-600"></i></div><div><p class="text-gray-500 text-sm">Receitas (Mês)</p><p id="receitas-mes" class="text-2xl font-bold text-green-600">R$ 0,00</p></div></div>
                     <div class="card p-6 flex items-center"><div class="bg-red-100 p-4 rounded-full mr-4"><i class="fas fa-arrow-down text-2xl text-red-600"></i></div><div><p class="text-gray-500 text-sm">Despesas (Mês)</p><p id="despesas-mes" class="text-2xl font-bold text-red-600">R$ 0,00</p></div></div>
                     <div class="card p-6 flex items-center"><div class="bg-purple-100 p-4 rounded-full mr-4"><i class="fas fa-credit-card text-2xl text-purple-600"></i></div><div><p class="text-gray-500 text-sm">Total Faturas</p><p id="fatura-cartoes" class="text-2xl font-bold text-purple-600">R$ 0,00</p></div></div>
                 </div>
-                 <!-- Dashboard de Cartões -->
                 <h3 class="text-2xl font-bold text-gray-800 mb-4">Meus Cartões</h3>
-                <div id="dashboard-cartoes" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                    <!-- Cards de cartão serão inseridos aqui -->
-                </div>
-
-                 <!-- Gráfico e Formulário -->
+                <div id="dashboard-cartoes" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6"></div>
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                     <div class="lg:col-span-2 card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Fluxo de Caixa Anual</h3><canvas id="fluxo-caixa-chart"></canvas></div>
-                    <div class="card p-6">
-                        <h3 class="text-xl font-semibold mb-4 text-gray-700">Nova Transação</h3>
-                        <form id="form-transacao" class="space-y-4">
-                            <div><label class="block text-sm font-medium text-gray-700">Tipo</label><div class="flex gap-4 mt-1"><input type="radio" id="tipo-receita" name="tipo" value="receita" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" checked><label for="tipo-receita">Receita</label><input type="radio" id="tipo-despesa" name="tipo" value="despesa" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"><label for="tipo-despesa">Despesa</label></div></div>
-                            <div><label for="descricao" class="block text-sm font-medium text-gray-700">Descrição</label><input type="text" id="descricao" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></div>
-                            <div id="origem-container"><label for="origem" class="block text-sm font-medium text-gray-700">Origem</label><input type="text" id="origem" placeholder="Ex: Salário" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></div>
-                            <div><label for="valor" class="block text-sm font-medium text-gray-700">Valor</label><input type="number" id="valor" step="0.01" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></div>
-                            <div id="pagamento-container" class="hidden"><label for="pagamento" class="block text-sm font-medium text-gray-700">Pago com</label><select id="pagamento" class="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"><option value="saldo">Saldo da Conta</option></select></div>
-                            <button type="submit" class="w-full btn btn-primary">Adicionar</button>
-                        </form>
-                    </div>
+                    <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Nova Transação</h3><form id="form-transacao" class="space-y-4"><div><label class="block text-sm font-medium text-gray-700">Tipo</label><div class="flex gap-4 mt-1"><input type="radio" id="tipo-receita" name="tipo" value="receita" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" checked><label for="tipo-receita">Receita</label><input type="radio" id="tipo-despesa" name="tipo" value="despesa" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"><label for="tipo-despesa">Despesa</label></div></div><div><label for="descricao" class="block text-sm font-medium text-gray-700">Descrição</label><input type="text" id="descricao" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required></div><div id="origem-container"><label for="origem" class="block text-sm font-medium text-gray-700">Origem</label><input type="text" id="origem" placeholder="Ex: Salário" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"></div><div><label for="valor" class="block text-sm font-medium text-gray-700">Valor</label><input type="number" id="valor" step="0.01" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required></div><div id="pagamento-container" class="hidden"><label for="pagamento" class="block text-sm font-medium text-gray-700">Pago com</label><select id="pagamento" class="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3"><option value="saldo">Saldo da Conta</option></select></div><button type="submit" class="w-full btn btn-primary">Adicionar</button></form></div>
                 </div>
-                 <!-- Listas -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="card p-6 lg:col-span-2"><h3 class="text-xl font-semibold mb-4 text-gray-700">Transações do Mês</h3><div id="lista-transacoes" class="space-y-3 max-h-96 overflow-y-auto"></div></div>
-                    <div class="space-y-6">
-                        <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Gerenciar Cartões</h3><form id="form-cartao" class="space-y-3 mb-4"><input type="text" id="nome-cartao" placeholder="Nome do Cartão" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm" required><input type="number" id="limite-cartao" placeholder="Limite do Cartão" step="0.01" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm" required><button type="submit" class="w-full btn btn-secondary">Adicionar Cartão</button></form><div id="lista-cartoes" class="space-y-4 max-h-60 overflow-y-auto"></div></div>
-                        <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Compras Parceladas</h3><form id="form-parcelamento" class="space-y-3"><input type="text" id="parcela-descricao" placeholder="Descrição da compra" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm" required><div class="flex gap-2"><input type="number" id="parcela-valor" placeholder="Valor Total" step="0.01" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm" required><input type="number" id="parcela-numero" placeholder="Nº Parcelas" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm" required></div><button type="submit" class="w-full btn btn-secondary">Adicionar Compra</button></form><div id="lista-parcelamentos" class="space-y-3 mt-4 max-h-60 overflow-y-auto"></div></div>
-                    </div>
-                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6"><div class="card p-6 lg:col-span-2"><h3 class="text-xl font-semibold mb-4 text-gray-700">Transações do Mês</h3><div id="lista-transacoes" class="space-y-3 max-h-96 overflow-y-auto"></div></div><div class="space-y-6"><div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Gerenciar Cartões</h3><form id="form-cartao" class="space-y-3 mb-4"><input type="text" id="nome-cartao" placeholder="Nome do Cartão" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required><input type="number" id="limite-cartao" placeholder="Limite do Cartão" step="0.01" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required><button type="submit" class="w-full btn btn-secondary">Adicionar Cartão</button></form><div id="lista-cartoes" class="space-y-4 max-h-60 overflow-y-auto"></div></div><div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Compras Parceladas</h3><form id="form-parcelamento" class="space-y-3"><input type="text" id="parcela-descricao" placeholder="Descrição da compra" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required><div class="flex gap-2"><input type="number" id="parcela-valor" placeholder="Valor Total" step="0.01" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required><input type="number" id="parcela-numero" placeholder="Nº Parcelas" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required></div><button type="submit" class="w-full btn btn-secondary">Adicionar Compra</button></form><div id="lista-parcelamentos" class="space-y-3 mt-4 max-h-60 overflow-y-auto"></div></div></div></div>
             </section>
 
             <!-- Seção Estoque -->
             <section id="estoque" class="page hidden">
-                 <h2 class="text-3xl font-bold text-gray-800 mb-6">Lista de Compras e Estoque</h2>
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Lista de Compras e Estoque</h2><div class="grid grid-cols-1 lg:grid-cols-3 gap-6"><div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Adicionar Item</h3><form id="form-estoque" class="space-y-4"><div><label for="item-nome" class="block text-sm font-medium text-gray-700">Nome do Item</label><input type="text" id="item-nome" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required></div><div class="flex gap-4"><div class="flex-1"><label for="item-qtd" class="block text-sm font-medium text-gray-700">Quantidade</label><input type="number" id="item-qtd" value="1" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required></div><div class="flex-1"><label for="item-min" class="block text-sm font-medium text-gray-700">Qtd. Mínima</label><input type="number" id="item-min" value="1" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required></div></div><button type="submit" class="w-full btn btn-primary">Adicionar ao Estoque</button></form></div><div class="lg:col-span-2 card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Itens em Estoque</h3><div id="lista-estoque" class="space-y-3 max-h-[70vh] overflow-y-auto"></div></div></div>
+            </section>
+            
+            <!-- Seção Agenda -->
+            <section id="agenda" class="page hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800">Agenda de Compromissos</h2>
+                    <div class="flex items-center gap-4 card p-2">
+                        <button id="prev-month-agenda" class="text-gray-600 hover:text-indigo-600 text-xl px-2"><i class="fas fa-chevron-left"></i></button>
+                        <h3 id="current-month-display-agenda" class="text-xl font-semibold text-gray-700 w-48 text-center"></h3>
+                        <button id="next-month-agenda" class="text-gray-600 hover:text-indigo-600 text-xl px-2"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="card p-6">
-                        <h3 class="text-xl font-semibold mb-4 text-gray-700">Adicionar Item</h3>
-                        <form id="form-estoque" class="space-y-4">
-                             <div><label for="item-nome" class="block text-sm font-medium text-gray-700">Nome do Item</label><input type="text" id="item-nome" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></div>
-                             <div class="flex gap-4"><div class="flex-1"><label for="item-qtd" class="block text-sm font-medium text-gray-700">Quantidade</label><input type="number" id="item-qtd" value="1" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></div><div class="flex-1"><label for="item-min" class="block text-sm font-medium text-gray-700">Qtd. Mínima</label><input type="number" id="item-min" value="1" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></div></div>
-                             <button type="submit" class="w-full btn btn-primary">Adicionar ao Estoque</button>
+                        <h3 class="text-xl font-semibold mb-4 text-gray-700">Novo Compromisso</h3>
+                        <form id="form-agenda" class="space-y-4">
+                            <div><label for="agenda-descricao" class="block text-sm font-medium text-gray-700">Descrição / Local</label><input type="text" id="agenda-descricao" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required></div>
+                            <div class="flex gap-4">
+                                <div class="flex-1"><label for="agenda-data" class="block text-sm font-medium text-gray-700">Data</label><input type="date" id="agenda-data" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required></div>
+                                <div class="flex-1"><label for="agenda-hora" class="block text-sm font-medium text-gray-700">Hora</label><input type="time" id="agenda-hora" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required></div>
+                            </div>
+                            <button type="submit" class="w-full btn btn-primary">Agendar</button>
                         </form>
                     </div>
                     <div class="lg:col-span-2 card p-6">
-                        <h3 class="text-xl font-semibold mb-4 text-gray-700">Itens em Estoque</h3>
-                        <div id="lista-estoque" class="space-y-3 max-h-[70vh] overflow-y-auto"></div>
+                        <h3 class="text-xl font-semibold mb-4 text-gray-700">Compromissos do Mês</h3>
+                        <div id="lista-agenda" class="space-y-4 max-h-[70vh] overflow-y-auto"></div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Seção Tarefas da Casa -->
+            <section id="tarefas-casa" class="page hidden">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Tarefas da Casa</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-700">Nova Tarefa</h3>
+                        <form id="form-tarefa-casa" class="space-y-4">
+                            <div><label for="tarefa-casa-descricao" class="block text-sm font-medium text-gray-700">Descrição da Tarefa</label><input type="text" id="tarefa-casa-descricao" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required></div>
+                            <div><label for="tarefa-casa-responsavel" class="block text-sm font-medium text-gray-700">Responsável (Opcional)</label><select id="tarefa-casa-responsavel" class="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3"><option value="">Ninguém</option></select></div>
+                            <button type="submit" class="w-full btn btn-primary">Adicionar Tarefa</button>
+                        </form>
+                    </div>
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">A Fazer</h3><div id="lista-tarefas-casa-pendentes" class="space-y-3"></div></div>
+                        <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Concluídas</h3><div id="lista-tarefas-casa-concluidas" class="space-y-3 max-h-60 overflow-y-auto"></div></div>
                     </div>
                 </div>
             </section>
 
-            <!-- Seção Tarefas -->
-            <section id="tarefas" class="page hidden">
-                 <h2 class="text-3xl font-bold text-gray-800 mb-6">Gerenciador de Tarefas</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="card p-6 space-y-6">
-                        <div>
-                            <h3 class="text-xl font-semibold mb-4 text-gray-700">Adicionar Tarefa</h3>
-                            <form id="form-tarefa" class="space-y-4">
-                                <div><label for="tarefa-descricao" class="block text-sm font-medium text-gray-700">Descrição da Tarefa</label><input type="text" id="tarefa-descricao" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required></div>
-                                <div><label for="tarefa-responsavel" class="block text-sm font-medium text-gray-700">Responsável</label><select id="tarefa-responsavel" class="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3"></select></div>
-                                <div><label for="tarefa-pontos" class="block text-sm font-medium text-gray-700">Pontos</label><input type="number" id="tarefa-pontos" value="10" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required></div>
-                                <div><label class="block text-sm font-medium text-gray-700">Frequência</label><select id="tarefa-frequencia" class="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3"><option value="unica">Única</option><option value="diaria">Diária</option><option value="semanal">Semanal</option><option value="mensal">Mensal</option></select></div>
-                                <button type="submit" class="w-full btn btn-primary">Adicionar Tarefa</button>
-                            </form>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-semibold mb-4 text-gray-700">Adicionar Participante</h3>
-                            <form id="form-participante" class="flex gap-2"><input type="text" id="participante-nome" placeholder="Nome da criança" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3" required><button type="submit" class="btn btn-secondary">Add</button></form>
-                        </div>
-                    </div>
-                    <div class="lg:col-span-2 space-y-6">
-                        <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Tarefas Pendentes</h3><div id="lista-tarefas-pendentes" class="space-y-3"></div></div>
-                        <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Quadro de Pontos (Mês Atual)</h3><div id="quadro-pontos" class="space-y-3"></div></div>
-                        <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Histórico Mensal</h3><div id="historico-pontos" class="space-y-3 max-h-48 overflow-y-auto"></div></div>
-                        <div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Tarefas Concluídas</h3><div id="lista-tarefas-concluidas" class="space-y-3 max-h-48 overflow-y-auto"></div></div>
-                    </div>
-                </div>
+            <!-- Seção Tarefas Infantis -->
+            <section id="tarefas-infantis" class="page hidden">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Gerenciador de Tarefas Infantis</h2><div class="grid grid-cols-1 lg:grid-cols-3 gap-6"><div class="card p-6 space-y-6"><div><h3 class="text-xl font-semibold mb-4 text-gray-700">Adicionar Tarefa</h3><form id="form-tarefa-infantil" class="space-y-4"><div><label for="tarefa-infantil-descricao" class="block text-sm font-medium text-gray-700">Descrição da Tarefa</label><input type="text" id="tarefa-infantil-descricao" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required></div><div><label for="tarefa-infantil-responsavel" class="block text-sm font-medium text-gray-700">Responsável</label><select id="tarefa-infantil-responsavel" class="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3"></select></div><div><label for="tarefa-infantil-pontos" class="block text-sm font-medium text-gray-700">Pontos</label><input type="number" id="tarefa-infantil-pontos" value="10" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required></div><div><label class="block text-sm font-medium text-gray-700">Frequência</label><select id="tarefa-infantil-frequencia" class="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3"><option value="unica">Única</option><option value="diaria">Diária</option><option value="semanal">Semanal</option><option value="mensal">Mensal</option></select></div><button type="submit" class="w-full btn btn-primary">Adicionar Tarefa</button></form></div><div><h3 class="text-xl font-semibold mb-4 text-gray-700">Adicionar Participante</h3><form id="form-participante" class="flex gap-2"><input type="text" id="participante-nome" placeholder="Nome da criança" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3" required><button type="submit" class="btn btn-secondary">Add</button></form></div></div><div class="lg:col-span-2 space-y-6"><div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Tarefas Pendentes</h3><div id="lista-tarefas-infantis-pendentes" class="space-y-3"></div></div><div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Quadro de Pontos (Mês Atual)</h3><div id="quadro-pontos" class="space-y-3"></div></div><div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Histórico Mensal</h3><div id="historico-pontos" class="space-y-3 max-h-48 overflow-y-auto"></div></div><div class="card p-6"><h3 class="text-xl font-semibold mb-4 text-gray-700">Tarefas Concluídas</h3><div id="lista-tarefas-infantis-concluidas" class="space-y-3 max-h-48 overflow-y-auto"></div></div></div></div>
             </section>
         </main>
     </div>
@@ -271,11 +270,15 @@
         // --- ESTADO GLOBAL DA APLICAÇÃO ---
         let financas = { transacoes: [], cartoes: [], parcelamentos: [] };
         let estoque = [];
-        let tarefas = { participantes: [], tarefas: [] };
+        let agenda = [];
+        let tarefasCasa = [];
+        let tarefasInfantis = { participantes: [], tarefas: [] };
+
         let currentUser = null;
         let unsubscribeData;
         let fluxoCaixaChart;
-        let selectedDate = new Date();
+        let selectedDateFinancas = new Date();
+        let selectedDateAgenda = new Date();
         
         // --- AUTENTICAÇÃO E CONTROLE DE UI ---
         const authContainer = document.getElementById('auth-container');
@@ -285,14 +288,12 @@
 
         onAuthStateChanged(auth, user => {
             if (user) {
-                // Utilizador está logado.
                 currentUser = user;
                 initializeAppForUser(user);
                 authContainer.classList.add('hidden');
                 appContainer.classList.remove('hidden');
                 appContainer.classList.add('flex');
             } else {
-                // Utilizador está desligado.
                 currentUser = null;
                 if (unsubscribeData) unsubscribeData();
                 authContainer.classList.remove('hidden');
@@ -305,7 +306,6 @@
         
         async function initializeAppForUser(user) {
             if (unsubscribeData) unsubscribeData();
-
             const dataRef = doc(db, "appData", user.uid);
             
             try {
@@ -314,29 +314,23 @@
                     await setDoc(dataRef, {
                         financas: { transacoes: [], cartoes: [], parcelamentos: [] },
                         estoque: [],
-                        tarefas: { participantes: [], tarefas: [] }
+                        agenda: [],
+                        tarefasCasa: [],
+                        tarefasInfantis: { participantes: [], tarefas: [] }
                     });
                 }
             } catch (error) {
                 console.error("Erro ao inicializar dados do utilizador:", error);
-                return;
             }
 
             unsubscribeData = onSnapshot(dataRef, (docSnap) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-
-                    // Garantir a estrutura de dados para cartões antigos
-                    if (data.financas && data.financas.cartoes) {
-                        data.financas.cartoes.forEach(card => {
-                            if (card.limite === undefined) card.limite = 0;
-                            if (!card.pagamentos) card.pagamentos = [];
-                        });
-                    }
-
                     financas = data.financas || { transacoes: [], cartoes: [], parcelamentos: [] };
                     estoque = data.estoque || [];
-                    tarefas = data.tarefas || { participantes: [], tarefas: [] };
+                    agenda = data.agenda || [];
+                    tarefasCasa = data.tarefasCasa || [];
+                    tarefasInfantis = data.tarefasInfantis || { participantes: [], tarefas: [] };
                 }
                 renderAll();
             }, error => {
@@ -348,7 +342,7 @@
             if (!currentUser) return;
             try {
                 const dataRef = doc(db, "appData", currentUser.uid);
-                await setDoc(dataRef, { financas, estoque, tarefas }, { merge: true });
+                await setDoc(dataRef, { financas, estoque, agenda, tarefasCasa, tarefasInfantis }, { merge: true });
             } catch (error) {
                 console.error("Erro ao salvar dados: ", error);
             }
@@ -357,55 +351,45 @@
         function clearLocalState() {
             financas = { transacoes: [], cartoes: [], parcelamentos: [] };
             estoque = [];
-            tarefas = { participantes: [], tarefas: [] };
+            agenda = [];
+            tarefasCasa = [];
+            tarefasInfantis = { participantes: [], tarefas: [] };
         }
         
         // --- FUNÇÕES DE RENDERIZAÇÃO ---
         function renderAll() {
             renderFinancas();
             renderEstoque();
-            renderTarefas();
+            renderAgenda();
+            renderTarefasCasa();
+            renderTarefasInfantis();
         }
 
         const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0);
 
         // --- LÓGICA DE FINANÇAS ---
         function renderFinancas() {
-            // Atualiza o display do mês
-            const monthDisplay = document.getElementById('current-month-display');
-            const monthName = selectedDate.toLocaleString('pt-BR', { month: 'long' });
-            monthDisplay.textContent = `${monthName.charAt(0).toUpperCase() + monthName.slice(1)} de ${selectedDate.getFullYear()}`;
+            const monthDisplay = document.getElementById('current-month-display-financas');
+            const monthName = selectedDateFinancas.toLocaleString('pt-BR', { month: 'long' });
+            monthDisplay.textContent = `${monthName.charAt(0).toUpperCase() + monthName.slice(1)} de ${selectedDateFinancas.getFullYear()}`;
+            
+            const selectedMonth = selectedDateFinancas.getMonth();
+            const selectedYear = selectedDateFinancas.getFullYear();
 
-            const selectedMonth = selectedDate.getMonth();
-            const selectedYear = selectedDate.getFullYear();
-
-            // Filtra transações para o mês selecionado
             const transacoesDoMes = (financas.transacoes || []).filter(t => {
                 const dataTransacao = new Date(t.data);
                 return dataTransacao.getMonth() === selectedMonth && dataTransacao.getFullYear() === selectedYear;
             });
 
-            // Calcula Saldo Atual (cumulativo)
-            let saldo = 0;
-            (financas.transacoes || []).forEach(t => {
-                if (t.tipo === 'receita') {
-                    saldo += t.valor;
-                } else if (t.tipo === 'despesa' && t.pagamento === 'saldo') {
-                    saldo -= t.valor;
-                }
-            });
+            let saldo = (financas.transacoes || []).reduce((acc, t) => {
+                if (t.tipo === 'receita') return acc + t.valor;
+                if (t.tipo === 'despesa' && t.pagamento === 'saldo') return acc - t.valor;
+                return acc;
+            }, 0);
 
-            // Calcula Receitas e Despesas do Mês (filtrado)
-            let receitasMes = 0, despesasMes = 0;
-            transacoesDoMes.forEach(t => {
-                if (t.tipo === 'receita') {
-                    receitasMes += t.valor;
-                } else if (t.tipo === 'despesa') {
-                    despesasMes += t.valor;
-                }
-            });
+            const receitasMes = transacoesDoMes.filter(t => t.tipo === 'receita').reduce((acc, t) => acc + t.valor, 0);
+            const despesasMes = transacoesDoMes.filter(t => t.tipo === 'despesa').reduce((acc, t) => acc + t.valor, 0);
             
-            // Calcula Faturas e Saldo dos Cartões (cumulativo)
             let totalFaturas = 0;
             const dashboardCartoesEl = document.getElementById('dashboard-cartoes');
             dashboardCartoesEl.innerHTML = '';
@@ -416,65 +400,34 @@
                     const faturaAtual = gastos - pagamentos;
                     const saldoDisponivel = (card.limite || 0) - faturaAtual;
                     totalFaturas += faturaAtual;
-
                     const cardEl = document.createElement('div');
                     cardEl.className = 'card p-4';
-                    cardEl.innerHTML = `
-                        <div class="flex items-center">
-                            <div class="bg-indigo-100 p-3 rounded-full mr-4"><i class="fas fa-credit-card text-xl text-indigo-600"></i></div>
-                            <div>
-                                <p class="text-gray-500 text-sm font-semibold">${card.nome}</p>
-                                <p class="text-xl font-bold text-gray-800">${formatCurrency(saldoDisponivel)}</p>
-                                <p class="text-gray-400 text-xs">Limite: ${formatCurrency(card.limite)}</p>
-                            </div>
-                        </div>`;
+                    cardEl.innerHTML = `<div class="flex items-center"><div class="bg-indigo-100 p-3 rounded-full mr-4"><i class="fas fa-credit-card text-xl text-indigo-600"></i></div><div><p class="text-gray-500 text-sm font-semibold">${card.nome}</p><p class="text-xl font-bold text-gray-800">${formatCurrency(saldoDisponivel)}</p><p class="text-gray-400 text-xs">Limite: ${formatCurrency(card.limite)}</p></div></div>`;
                     dashboardCartoesEl.appendChild(cardEl);
                 });
             }
-
 
             document.getElementById('saldo-atual').textContent = formatCurrency(saldo);
             document.getElementById('receitas-mes').textContent = formatCurrency(receitasMes);
             document.getElementById('despesas-mes').textContent = formatCurrency(despesasMes);
             document.getElementById('fatura-cartoes').textContent = formatCurrency(totalFaturas);
 
-            renderListaTransacoes(); // Já vai usar selectedDate
+            renderListaTransacoes();
             renderListaCartoes();
             renderListaParcelamentos();
-            renderGraficoFluxoCaixa(); // Mostra o ano todo, não muda
+            renderGraficoFluxoCaixa();
         }
         
         function renderListaTransacoes() {
             const listaEl = document.getElementById('lista-transacoes');
             listaEl.innerHTML = '';
-
-            const selectedMonth = selectedDate.getMonth();
-            const selectedYear = selectedDate.getFullYear();
-
-            const transacoesDoMes = (financas.transacoes || []).filter(t => {
-                const dataTransacao = new Date(t.data);
-                return dataTransacao.getMonth() === selectedMonth && dataTransacao.getFullYear() === selectedYear;
-            });
-            
-            if (transacoesDoMes.length === 0) {
-                listaEl.innerHTML = '<p class="text-gray-500 text-center">Nenhuma transação neste mês.</p>';
-                return;
-            }
-
+            const transacoesDoMes = (financas.transacoes || []).filter(t => new Date(t.data).getMonth() === selectedDateFinancas.getMonth() && new Date(t.data).getFullYear() === selectedDateFinancas.getFullYear());
+            if (transacoesDoMes.length === 0) { listaEl.innerHTML = '<p class="text-gray-500 text-center">Nenhuma transação neste mês.</p>'; return; }
             [...transacoesDoMes].sort((a, b) => new Date(b.data) - new Date(a.data)).forEach(t => {
                 const item = document.createElement('div');
                 const isReceita = t.tipo === 'receita';
                 item.className = `flex justify-between items-center p-3 rounded-lg ${isReceita ? 'bg-green-50' : 'bg-red-50'}`;
-                item.innerHTML = `
-                    <div>
-                        <p class="font-semibold">${t.descricao}</p>
-                        <p class="text-xs text-gray-500">${new Date(t.data).toLocaleDateString()} - ${isReceita ? 'Origem: ' + (t.origem || '') : 'Pago com: ' + t.pagamento}</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="font-bold ${isReceita ? 'text-green-600' : 'text-red-600'}">${isReceita ? '+' : '-'} ${formatCurrency(t.valor)}</p>
-                        <button class="text-xs text-gray-400 hover:text-red-500" onclick="deletarTransacao(${t.id})"><i class="fas fa-trash-alt"></i></button>
-                    </div>
-                `;
+                item.innerHTML = `<div><p class="font-semibold">${t.descricao}</p><p class="text-xs text-gray-500">${new Date(t.data).toLocaleDateString()} - ${isReceita ? 'Origem: ' + (t.origem || '') : 'Pago com: ' + t.pagamento}</p></div><div class="text-right"><p class="font-bold ${isReceita ? 'text-green-600' : 'text-red-600'}">${isReceita ? '+' : '-'} ${formatCurrency(t.valor)}</p><button class="text-xs text-gray-400 hover:text-red-500" onclick="deletarTransacao(${t.id})"><i class="fas fa-trash-alt"></i></button></div>`;
                 listaEl.appendChild(item);
             });
         }
@@ -483,43 +436,21 @@
             const listaEl = document.getElementById('lista-cartoes');
             const selectPagamento = document.getElementById('pagamento');
             listaEl.innerHTML = '';
-            // Limpa opções antigas, mantendo a primeira ("Saldo da Conta")
-            while (selectPagamento.options.length > 1) {
-                selectPagamento.remove(1);
-            }
-
+            while (selectPagamento.options.length > 1) { selectPagamento.remove(1); }
             if (!financas.cartoes || financas.cartoes.length === 0) {
                 listaEl.innerHTML = '<p class="text-gray-500 text-sm text-center">Nenhum cartão adicionado.</p>';
             } else {
                 financas.cartoes.forEach(card => {
-                    // Adiciona cartão ao select de pagamento
                     const option = document.createElement('option');
-                    option.value = card.nome;
-                    option.textContent = card.nome;
+                    option.value = card.nome; option.textContent = card.nome;
                     selectPagamento.appendChild(option);
-
-                    // Renderiza o card na lista de gerenciamento (valores cumulativos)
                     const gastos = (financas.transacoes || []).filter(t => t.pagamento === card.nome).reduce((acc, t) => acc + t.valor, 0);
                     const pagamentos = (card.pagamentos || []).reduce((acc, p) => acc + p.valor, 0);
                     const faturaAtual = gastos - pagamentos;
                     const saldoDisponivel = (card.limite || 0) - faturaAtual;
-                    
                     const item = document.createElement('div');
                     item.className = 'bg-gray-50 p-3 rounded-lg';
-                    item.innerHTML = `
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="font-bold">${card.nome}</span>
-                            <button class="text-xs text-gray-400 hover:text-red-500" onclick="deletarCartao(${card.id})"><i class="fas fa-trash-alt"></i></button>
-                        </div>
-                        <div class="text-xs space-y-1">
-                            <p>Fatura: <span class="font-semibold">${formatCurrency(faturaAtual)}</span></p>
-                            <p>Disponível: <span class="font-semibold">${formatCurrency(saldoDisponivel)}</span></p>
-                        </div>
-                        <form class="flex gap-2 mt-3" onsubmit="event.preventDefault(); pagarFatura(${card.id}, this);">
-                            <input type="number" name="valorPagamento" placeholder="Valor a pagar" step="0.01" class="w-full text-sm border-gray-300 rounded-md shadow-sm" required>
-                            <button type="submit" class="btn btn-secondary text-xs p-2">Pagar</button>
-                        </form>
-                    `;
+                    item.innerHTML = `<div class="flex justify-between items-center mb-2"><span class="font-bold">${card.nome}</span><button class="text-xs text-gray-400 hover:text-red-500" onclick="deletarCartao(${card.id})"><i class="fas fa-trash-alt"></i></button></div><div class="text-xs space-y-1"><p>Fatura: <span class="font-semibold">${formatCurrency(faturaAtual)}</span></p><p>Disponível: <span class="font-semibold">${formatCurrency(saldoDisponivel)}</span></p></div><form class="flex gap-2 mt-3" onsubmit="event.preventDefault(); pagarFatura(${card.id}, this);"><input type="number" name="valorPagamento" placeholder="Valor a pagar" step="0.01" class="w-full text-sm border-gray-300 rounded-md shadow-sm" required><button type="submit" class="btn btn-secondary text-xs p-2">Pagar</button></form>`;
                     listaEl.appendChild(item);
                 });
             }
@@ -528,125 +459,125 @@
         function renderListaParcelamentos() {
             const listaEl = document.getElementById('lista-parcelamentos');
             listaEl.innerHTML = '';
-            if (!financas.parcelamentos || financas.parcelamentos.length === 0) {
-                listaEl.innerHTML = '<p class="text-gray-500 text-sm text-center">Nenhuma compra parcelada.</p>';
-                return;
-            }
+            if (!financas.parcelamentos || financas.parcelamentos.length === 0) { listaEl.innerHTML = '<p class="text-gray-500 text-sm text-center">Nenhuma compra parcelada.</p>'; return; }
             financas.parcelamentos.forEach(p => {
                 const item = document.createElement('div');
                 const isQuitado = p.pagas >= p.totalParcelas;
                 item.className = `p-3 rounded-lg ${isQuitado ? 'bg-green-50' : 'bg-yellow-50'}`;
-                item.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="font-semibold">${p.descricao}</p>
-                            <p class="text-xs text-gray-600">${formatCurrency(p.valorParcela)}/mês</p>
-                        </div>
-                        <div class="text-right">
-                             <p class="text-sm font-bold ${isQuitado ? 'text-green-600' : 'text-yellow-700'}">${isQuitado ? 'Quitado' : `Parcela ${p.pagas}/${p.totalParcelas}`}</p>
-                            ${!isQuitado ? `<button class="text-xs btn btn-secondary mt-1 p-1" onclick="pagarParcela(${p.id})">Pagar Parcela</button>` : ''}
-                        </div>
-                    </div>
-                `;
+                item.innerHTML = `<div class="flex justify-between items-start"><div><p class="font-semibold">${p.descricao}</p><p class="text-xs text-gray-600">${formatCurrency(p.valorParcela)}/mês</p></div><div class="text-right"><p class="text-sm font-bold ${isQuitado ? 'text-green-600' : 'text-yellow-700'}">${isQuitado ? 'Quitado' : `Parcela ${p.pagas}/${p.totalParcelas}`}</p>${!isQuitado ? `<button class="text-xs btn btn-secondary mt-1 p-1" onclick="pagarParcela(${p.id})">Pagar Parcela</button>` : ''}</div></div>`;
                 listaEl.appendChild(item);
             });
         }
         
         function renderGraficoFluxoCaixa() {
             const ctx = document.getElementById('fluxo-caixa-chart').getContext('2d');
-            const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-            const receitasData = Array(12).fill(0);
-            const despesasData = Array(12).fill(0);
-
+            const receitasData = Array(12).fill(0); const despesasData = Array(12).fill(0);
             if (financas.transacoes) {
-                const transacoesDoAno = financas.transacoes.filter(t => new Date(t.data).getFullYear() === selectedDate.getFullYear());
-                transacoesDoAno.forEach(t => {
+                financas.transacoes.filter(t => new Date(t.data).getFullYear() === selectedDateFinancas.getFullYear()).forEach(t => {
                     const mes = new Date(t.data).getMonth();
-                    if (t.tipo === 'receita') receitasData[mes] += t.valor;
-                    else if(t.tipo === 'despesa') despesasData[mes] += t.valor;
+                    if (t.tipo === 'receita') receitasData[mes] += t.valor; else if (t.tipo === 'despesa') despesasData[mes] += t.valor;
                 });
             }
-
-            if (fluxoCaixaChart) {
-                fluxoCaixaChart.data.datasets[0].data = receitasData;
-                fluxoCaixaChart.data.datasets[1].data = despesasData;
-                fluxoCaixaChart.update();
-            } else {
-                fluxoCaixaChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            { label: 'Receitas', data: receitasData, backgroundColor: 'rgba(75, 192, 192, 0.6)' },
-                            { label: 'Despesas', data: despesasData, backgroundColor: 'rgba(255, 99, 132, 0.6)' }
-                        ]
-                    },
-                    options: { responsive: true, scales: { y: { beginAtZero: true } } }
-                });
-            }
+            if (fluxoCaixaChart) { fluxoCaixaChart.data.datasets[0].data = receitasData; fluxoCaixaChart.data.datasets[1].data = despesasData; fluxoCaixaChart.update(); } 
+            else { fluxoCaixaChart = new Chart(ctx, { type: 'bar', data: { labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'], datasets: [{ label: 'Receitas', data: receitasData, backgroundColor: 'rgba(75, 192, 192, 0.6)' }, { label: 'Despesas', data: despesasData, backgroundColor: 'rgba(255, 99, 132, 0.6)' }] }, options: { responsive: true, scales: { y: { beginAtZero: true } } } }); }
         }
 
         // --- LÓGICA DE ESTOQUE ---
         function renderEstoque() {
             const listaEl = document.getElementById('lista-estoque');
             listaEl.innerHTML = '';
-            if(!estoque || estoque.length === 0) {
-                listaEl.innerHTML = '<p class="text-gray-500 text-center">Nenhum item no estoque.</p>';
-                return;
-            }
+            if(!estoque || estoque.length === 0) { listaEl.innerHTML = '<p class="text-gray-500 text-center">Nenhum item no estoque.</p>'; return; }
             [...estoque].sort((a,b) => a.nome.localeCompare(b.nome)).forEach(item => {
                 const isLow = item.qtd <= item.min;
                 const itemEl = document.createElement('div');
                 itemEl.className = `flex justify-between items-center p-3 rounded-lg ${isLow ? 'low-stock' : 'bg-gray-50'}`;
-                itemEl.innerHTML = `
-                    <div>
-                        <p class="font-semibold">${item.nome}</p>
-                        <p class="text-xs text-gray-500">Mínimo: ${item.min}</p>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <button class="text-gray-500 hover:text-red-600" onclick="atualizarQtdItem(${item.id}, -1)"><i class="fas fa-minus-circle"></i></button>
-                        <span class="font-bold text-lg">${item.qtd}</span>
-                        <button class="text-gray-500 hover:text-green-600" onclick="atualizarQtdItem(${item.id}, 1)"><i class="fas fa-plus-circle"></i></button>
-                        <button class="ml-4 text-gray-400 hover:text-red-600" onclick="deletarItemEstoque(${item.id})"><i class="fas fa-trash-alt"></i></button>
-                    </div>
-                `;
+                itemEl.innerHTML = `<div><p class="font-semibold">${item.nome}</p><p class="text-xs text-gray-500">Mínimo: ${item.min}</p></div><div class="flex items-center gap-3"><button class="text-gray-500 hover:text-red-600" onclick="atualizarQtdItem(${item.id}, -1)"><i class="fas fa-minus-circle"></i></button><span class="font-bold text-lg">${item.qtd}</span><button class="text-gray-500 hover:text-green-600" onclick="atualizarQtdItem(${item.id}, 1)"><i class="fas fa-plus-circle"></i></button><button class="ml-4 text-gray-400 hover:text-red-600" onclick="deletarItemEstoque(${item.id})"><i class="fas fa-trash-alt"></i></button></div>`;
                 listaEl.appendChild(itemEl);
             });
         }
+        
+        // --- LÓGICA DE AGENDA ---
+        function renderAgenda() {
+            const monthDisplay = document.getElementById('current-month-display-agenda');
+            const monthName = selectedDateAgenda.toLocaleString('pt-BR', { month: 'long' });
+            monthDisplay.textContent = `${monthName.charAt(0).toUpperCase() + monthName.slice(1)} de ${selectedDateAgenda.getFullYear()}`;
 
-        // --- LÓGICA DE TAREFAS ---
-        function renderTarefas() {
+            const listaEl = document.getElementById('lista-agenda');
+            listaEl.innerHTML = '';
+            const compromissosDoMes = (agenda || []).filter(c => new Date(c.data).getMonth() === selectedDateAgenda.getMonth() && new Date(c.data).getFullYear() === selectedDateAgenda.getFullYear());
+
+            if (compromissosDoMes.length === 0) { listaEl.innerHTML = '<p class="text-gray-500 text-center">Nenhum compromisso neste mês.</p>'; return; }
+
+            const agora = new Date();
+            const vinteQuatroHoras = new Date(agora.getTime() + (24 * 60 * 60 * 1000));
+
+            [...compromissosDoMes].sort((a, b) => new Date(a.data) - new Date(b.data)).forEach(c => {
+                const dataCompromisso = new Date(c.data);
+                const isUpcoming = dataCompromisso > agora && dataCompromisso < vinteQuatroHoras;
+                const item = document.createElement('div');
+                item.className = `flex justify-between items-center p-4 rounded-lg ${isUpcoming ? 'upcoming-event' : 'bg-gray-50'}`;
+                item.innerHTML = `<div class="flex items-center"><div class="text-center w-16 mr-4"><p class="text-3xl font-bold text-indigo-600">${dataCompromisso.getDate()}</p><p class="text-sm text-gray-500">${dataCompromisso.toLocaleString('pt-BR', { weekday: 'short' })}</p></div><div><p class="font-semibold">${c.descricao}</p><p class="text-sm text-gray-600"><i class="fas fa-clock mr-1"></i>${c.hora}</p></div></div><button class="text-gray-400 hover:text-red-600" onclick="deletarCompromisso(${c.id})"><i class="fas fa-trash-alt"></i></button>`;
+                listaEl.appendChild(item);
+            });
+        }
+        
+        // --- LÓGICA TAREFAS DA CASA ---
+        function renderTarefasCasa() {
+            const selectEl = document.getElementById('tarefa-casa-responsavel');
+            selectEl.innerHTML = '<option value="">Ninguém</option>';
+            (tarefasInfantis.participantes || []).forEach(p => {
+                const option = document.createElement('option');
+                option.value = p.nome; option.textContent = p.nome;
+                selectEl.appendChild(option);
+            });
+
+            const pendentesEl = document.getElementById('lista-tarefas-casa-pendentes');
+            const concluidasEl = document.getElementById('lista-tarefas-casa-concluidas');
+            pendentesEl.innerHTML = ''; concluidasEl.innerHTML = '';
+
+            const tarefasPendentes = (tarefasCasa || []).filter(t => t.status === 'pendente');
+            const tarefasConcluidas = (tarefasCasa || []).filter(t => t.status === 'concluida');
+
+            if (tarefasPendentes.length === 0) pendentesEl.innerHTML = '<p class="text-gray-500 text-center">Nenhuma tarefa a fazer.</p>';
+            if (tarefasConcluidas.length === 0) concluidasEl.innerHTML = '<p class="text-gray-500 text-center">Nenhuma tarefa foi concluída.</p>';
+            
+            tarefasPendentes.forEach(t => {
+                const item = document.createElement('div');
+                item.className = 'flex justify-between items-center bg-gray-50 p-3 rounded-lg';
+                item.innerHTML = `<div><p class="font-semibold">${t.descricao}</p>${t.responsavel ? `<p class="text-xs text-gray-500">Para: ${t.responsavel}</p>` : ''}</div><div class="flex items-center gap-3"><button class="btn btn-secondary text-xs p-1" onclick="concluirTarefaCasa(${t.id})">Concluir</button><button class="text-gray-400 hover:text-red-500" onclick="deletarTarefaCasa(${t.id})"><i class="fas fa-trash-alt"></i></button></div>`;
+                pendentesEl.appendChild(item);
+            });
+
+            [...tarefasConcluidas].sort((a, b) => new Date(b.dataConclusao) - new Date(a.dataConclusao)).forEach(t => {
+                const item = document.createElement('div');
+                item.className = 'bg-green-50 p-2 rounded-md';
+                item.innerHTML = `<p class="text-sm text-gray-700 line-through"><i class="fas fa-check text-green-500 mr-2"></i>${t.descricao} ${t.responsavel ? `(${t.responsavel})` : ''}</p>`;
+                concluidasEl.appendChild(item);
+            });
+        }
+        
+        // --- LÓGICA DE TAREFAS INFANTIS ---
+        function renderTarefasInfantis() {
             renderParticipantes();
-            renderListaTarefas();
+            renderListaTarefasInfantis();
             renderQuadroPontos();
             renderHistoricoPontos();
         }
 
         function renderParticipantes() {
-            const selectEl = document.getElementById('tarefa-responsavel');
+            const selectEl = document.getElementById('tarefa-infantil-responsavel');
             selectEl.innerHTML = '';
-            if (!tarefas.participantes || tarefas.participantes.length === 0) {
-                 selectEl.innerHTML = '<option disabled>Adicione um participante</option>';
-            } else {
-                tarefas.participantes.forEach(p => {
-                    const option = document.createElement('option');
-                    option.value = p.nome;
-                    option.textContent = p.nome;
-                    selectEl.appendChild(option);
-                });
-            }
+            if (!tarefasInfantis.participantes || tarefasInfantis.participantes.length === 0) { selectEl.innerHTML = '<option disabled>Adicione um participante</option>'; }
+            else { tarefasInfantis.participantes.forEach(p => { const option = document.createElement('option'); option.value = p.nome; option.textContent = p.nome; selectEl.appendChild(option); }); }
         }
         
-        function renderListaTarefas() {
-            const pendentesEl = document.getElementById('lista-tarefas-pendentes');
-            const concluidasEl = document.getElementById('lista-tarefas-concluidas');
-            pendentesEl.innerHTML = '';
-            concluidasEl.innerHTML = '';
+        function renderListaTarefasInfantis() {
+            const pendentesEl = document.getElementById('lista-tarefas-infantis-pendentes');
+            const concluidasEl = document.getElementById('lista-tarefas-infantis-concluidas');
+            pendentesEl.innerHTML = ''; concluidasEl.innerHTML = '';
 
-            if (!tarefas.tarefas) tarefas.tarefas = [];
-
-            const tarefasPendentes = tarefas.tarefas.filter(t => t.status === 'pendente');
-            const tarefasConcluidas = [...tarefas.tarefas.filter(t => t.status !== 'pendente')].sort((a,b) => new Date(b.dataConclusao) - new Date(a.dataConclusao));
+            const tarefasPendentes = (tarefasInfantis.tarefas || []).filter(t => t.status === 'pendente');
+            const tarefasConcluidas = [...(tarefasInfantis.tarefas || []).filter(t => t.status !== 'pendente')].sort((a,b) => new Date(b.dataConclusao) - new Date(a.dataConclusao));
 
             if (tarefasPendentes.length === 0) pendentesEl.innerHTML = '<p class="text-gray-500 text-center">Nenhuma tarefa pendente!</p>';
             if (tarefasConcluidas.length === 0) concluidasEl.innerHTML = '<p class="text-gray-500 text-center">Nenhuma tarefa concluída ainda.</p>';
@@ -654,21 +585,7 @@
             tarefasPendentes.forEach(t => {
                 const item = document.createElement('div');
                 item.className = 'bg-gray-50 p-3 rounded-lg';
-                item.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="font-semibold">${t.descricao}</p>
-                            <p class="text-xs text-gray-500">Para: ${t.responsavel} | Vale: ${t.pontos} pontos</p>
-                        </div>
-                        <div class="flex flex-col items-end gap-2">
-                             <div class="flex gap-2">
-                                <button class="btn btn-secondary text-xs p-1" onclick="concluirTarefa(${t.id}, true)">Feito!</button>
-                                <button class="btn btn-danger text-xs p-1" onclick="concluirTarefa(${t.id}, false)">Não Feito</button>
-                            </div>
-                            <button class="text-xs text-gray-400 hover:text-red-500" onclick="deletarTarefa(${t.id})"><i class="fas fa-trash-alt"></i> Deletar</button>
-                        </div>
-                    </div>
-                `;
+                item.innerHTML = `<div class="flex justify-between items-start"><div><p class="font-semibold">${t.descricao}</p><p class="text-xs text-gray-500">Para: ${t.responsavel} | Vale: ${t.pontos} pontos</p></div><div class="flex flex-col items-end gap-2"><div class="flex gap-2"><button class="btn btn-secondary text-xs p-1" onclick="concluirTarefaInfantil(${t.id}, true)">Feito!</button><button class="btn btn-danger text-xs p-1" onclick="concluirTarefaInfantil(${t.id}, false)">Não Feito</button></div><button class="text-xs text-gray-400 hover:text-red-500" onclick="deletarTarefaInfantil(${t.id})"><i class="fas fa-trash-alt"></i> Deletar</button></div></div>`;
                 pendentesEl.appendChild(item);
             });
             
@@ -684,19 +601,12 @@
         function renderQuadroPontos() {
             const quadroEl = document.getElementById('quadro-pontos');
             quadroEl.innerHTML = '';
-            if (!tarefas.participantes || tarefas.participantes.length === 0) {
-                 quadroEl.innerHTML = '<p class="text-gray-500 text-center">Nenhum participante adicionado.</p>';
-                 return;
-            }
+            if (!tarefasInfantis.participantes || tarefasInfantis.participantes.length === 0) { quadroEl.innerHTML = '<p class="text-gray-500 text-center">Nenhum participante adicionado.</p>'; return; }
             
             const agora = new Date();
             const mesKey = `${agora.getFullYear()}-${String(agora.getMonth()).padStart(2, '0')}`;
-
-            const participantesComPontos = tarefas.participantes.map(p => {
-                // Garante que a estrutura de pontos seja um objeto para participantes antigos
-                if (typeof p.pontos !== 'object' || p.pontos === null) {
-                    p.pontos = {};
-                }
+            const participantesComPontos = tarefasInfantis.participantes.map(p => {
+                if (typeof p.pontos !== 'object' || p.pontos === null) { p.pontos = {}; }
                 const pontuacaoAtual = p.pontos[mesKey] === undefined ? 100 : p.pontos[mesKey];
                 return { ...p, pontuacaoAtual };
             });
@@ -714,56 +624,39 @@
             historicoEl.innerHTML = '';
             const agora = new Date();
             const mesAtualKey = `${agora.getFullYear()}-${String(agora.getMonth()).padStart(2, '0')}`;
-
             const todosOsMeses = new Set();
-            if (tarefas.participantes) {
-                tarefas.participantes.forEach(p => {
-                    if (typeof p.pontos === 'object' && p.pontos !== null) {
-                        Object.keys(p.pontos).forEach(mesKey => todosOsMeses.add(mesKey));
-                    }
-                });
+            if (tarefasInfantis.participantes) {
+                tarefasInfantis.participantes.forEach(p => { if (typeof p.pontos === 'object' && p.pontos !== null) { Object.keys(p.pontos).forEach(mesKey => todosOsMeses.add(mesKey)); } });
             }
-
             const mesesPassados = [...todosOsMeses].filter(m => m !== mesAtualKey).sort().reverse();
-
-            if (mesesPassados.length === 0) {
-                historicoEl.innerHTML = '<p class="text-gray-500 text-center">Nenhum histórico de meses fechados.</p>';
-                return;
-            }
-
+            if (mesesPassados.length === 0) { historicoEl.innerHTML = '<p class="text-gray-500 text-center">Nenhum histórico de meses fechados.</p>'; return; }
             mesesPassados.forEach(mesKey => {
-                let melhorPontuacao = -Infinity;
-                let vencedores = [];
-                
-                tarefas.participantes.forEach(p => {
+                let melhorPontuacao = -Infinity; let vencedores = [];
+                tarefasInfantis.participantes.forEach(p => {
                     const pontuacaoMes = (p.pontos && p.pontos[mesKey] !== undefined) ? p.pontos[mesKey] : 100;
-                    if (pontuacaoMes > melhorPontuacao) {
-                        melhorPontuacao = pontuacaoMes;
-                        vencedores = [p.nome];
-                    } else if (pontuacaoMes === melhorPontuacao) {
-                        vencedores.push(p.nome);
-                    }
+                    if (pontuacaoMes > melhorPontuacao) { melhorPontuacao = pontuacaoMes; vencedores = [p.nome]; } 
+                    else if (pontuacaoMes === melhorPontuacao) { vencedores.push(p.nome); }
                 });
-
                 const [ano, mes] = mesKey.split('-');
                 const nomeMes = new Date(ano, parseInt(mes), 1).toLocaleString('pt-BR', { month: 'long' });
                 const nomeMesCapitalizado = nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1);
-
                 const item = document.createElement('div');
                 item.className = 'bg-gray-100 p-2 rounded-md text-sm';
-                item.innerHTML = `
-                    <p class="font-semibold">${nomeMesCapitalizado} de ${ano}</p>
-                    <p>🏆 Vencedor(es): <span class="font-bold">${vencedores.join(', ')}</span> com ${melhorPontuacao} pontos.</p>
-                `;
+                item.innerHTML = `<p class="font-semibold">${nomeMesCapitalizado} de ${ano}</p><p>🏆 Vencedor(es): <span class="font-bold">${vencedores.join(', ')}</span> com ${melhorPontuacao} pontos.</p>`;
                 historicoEl.appendChild(item);
             });
         }
-
 
         // --- EVENT HANDLERS & FORM SUBMISSIONS ---
         document.getElementById('form-transacao').addEventListener('submit', (e) => { e.preventDefault(); adicionarTransacao(); });
         document.getElementById('form-cartao').addEventListener('submit', (e) => { e.preventDefault(); adicionarCartao(); });
         document.getElementById('form-parcelamento').addEventListener('submit', (e) => { e.preventDefault(); adicionarParcelamento(); });
+        document.getElementById('form-estoque').addEventListener('submit', (e) => { e.preventDefault(); adicionarItemEstoque(); });
+        document.getElementById('form-agenda').addEventListener('submit', (e) => { e.preventDefault(); adicionarCompromisso(); });
+        document.getElementById('form-tarefa-casa').addEventListener('submit', (e) => { e.preventDefault(); adicionarTarefaCasa(); });
+        document.getElementById('form-tarefa-infantil').addEventListener('submit', (e) => { e.preventDefault(); adicionarTarefaInfantil(); });
+        document.getElementById('form-participante').addEventListener('submit', (e) => { e.preventDefault(); adicionarParticipante(); });
+
         document.querySelectorAll('input[name="tipo"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
                 const isDespesa = e.target.value === 'despesa';
@@ -772,22 +665,11 @@
             });
         });
 
-        document.getElementById('form-estoque').addEventListener('submit', (e) => { e.preventDefault(); adicionarItemEstoque(); });
-        document.getElementById('form-tarefa').addEventListener('submit', (e) => { e.preventDefault(); adicionarTarefa(); });
-        document.getElementById('form-participante').addEventListener('submit', (e) => { e.preventDefault(); adicionarParticipante(); });
+        document.getElementById('prev-month-financas').addEventListener('click', () => { selectedDateFinancas.setMonth(selectedDateFinancas.getMonth() - 1); renderFinancas(); });
+        document.getElementById('next-month-financas').addEventListener('click', () => { selectedDateFinancas.setMonth(selectedDateFinancas.getMonth() + 1); renderFinancas(); });
+        document.getElementById('prev-month-agenda').addEventListener('click', () => { selectedDateAgenda.setMonth(selectedDateAgenda.getMonth() - 1); renderAgenda(); });
+        document.getElementById('next-month-agenda').addEventListener('click', () => { selectedDateAgenda.setMonth(selectedDateAgenda.getMonth() + 1); renderAgenda(); });
 
-        document.getElementById('prev-month').addEventListener('click', () => {
-            selectedDate.setMonth(selectedDate.getMonth() - 1);
-            renderFinancas();
-        });
-
-        document.getElementById('next-month').addEventListener('click', () => {
-            selectedDate.setMonth(selectedDate.getMonth() + 1);
-            renderFinancas();
-        });
-
-
-        // --- INICIALIZAÇÃO DA APLICAÇÃO ---
         document.addEventListener('DOMContentLoaded', () => {
             const navLinks = document.querySelectorAll('.nav-link');
             const pages = document.querySelectorAll('.page');
@@ -795,262 +677,120 @@
                 pages.forEach(page => page.classList.add('hidden'));
                 document.getElementById(pageId).classList.remove('hidden');
                 navLinks.forEach(link => link.classList.remove('nav-active'));
-                document.getElementById(`nav-${pageId}`).classList.add('nav-active');
+                document.getElementById(`nav-${pageId.replace('_', '-')}`).classList.add('nav-active');
             }
             navLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    const pageId = link.id.split('-')[1];
+                    const pageId = link.id.substring(4).replace('-', '_');
                     showPage(pageId);
                 });
             });
-            showPage('financas'); // Página inicial
+            showPage('financas');
         });
         
-        // --- MANIPULADORES DE AUTENTICAÇÃO ---
-        document.getElementById('show-cadastro').addEventListener('click', (e) => {
-            e.preventDefault();
-            loginCard.classList.add('hidden');
-            cadastroCard.classList.remove('hidden');
-        });
-
-        document.getElementById('show-login').addEventListener('click', (e) => {
-            e.preventDefault();
-            cadastroCard.classList.add('hidden');
-            loginCard.classList.remove('hidden');
-        });
-
-        document.getElementById('form-login').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const senha = document.getElementById('login-senha').value;
-            const errorEl = document.getElementById('login-error');
-            try {
-                errorEl.classList.add('hidden');
-                await signInWithEmailAndPassword(auth, email, senha);
-            } catch (error) {
-                errorEl.textContent = "Email ou senha inválidos.";
-                errorEl.classList.remove('hidden');
-            }
-        });
-
-        document.getElementById('form-cadastro').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('cadastro-email').value;
-            const senha = document.getElementById('cadastro-senha').value;
-             const errorEl = document.getElementById('cadastro-error');
-            try {
-                errorEl.classList.add('hidden');
-                await createUserWithEmailAndPassword(auth, email, senha);
-            } catch (error) {
-                errorEl.textContent = "Erro ao criar conta. Tente outro email.";
-                errorEl.classList.remove('hidden');
-            }
-        });
-
-        document.getElementById('btn-logout').addEventListener('click', () => {
-            signOut(auth);
-        });
+        document.getElementById('show-cadastro').addEventListener('click', (e) => { e.preventDefault(); loginCard.classList.add('hidden'); cadastroCard.classList.remove('hidden'); });
+        document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); cadastroCard.classList.add('hidden'); loginCard.classList.remove('hidden'); });
+        document.getElementById('form-login').addEventListener('submit', async (e) => { e.preventDefault(); const email = document.getElementById('login-email').value, senha = document.getElementById('login-senha').value, errorEl = document.getElementById('login-error'); try { errorEl.classList.add('hidden'); await signInWithEmailAndPassword(auth, email, senha); } catch (error) { errorEl.textContent = "Email ou senha inválidos."; errorEl.classList.remove('hidden'); } });
+        document.getElementById('form-cadastro').addEventListener('submit', async (e) => { e.preventDefault(); const email = document.getElementById('cadastro-email').value, senha = document.getElementById('cadastro-senha').value, errorEl = document.getElementById('cadastro-error'); try { errorEl.classList.add('hidden'); await createUserWithEmailAndPassword(auth, email, senha); } catch (error) { errorEl.textContent = "Erro ao criar conta. Tente outro email."; errorEl.classList.remove('hidden'); } });
+        document.getElementById('btn-logout').addEventListener('click', () => { signOut(auth); });
 
         // --- Funções de Ação (CRUD) ---
         function adicionarTransacao() {
-            const tipo = document.querySelector('input[name="tipo"]:checked').value;
-            const descricao = document.getElementById('descricao').value;
-            const valor = parseFloat(document.getElementById('valor').value);
-            const origem = document.getElementById('origem').value;
-            const pagamento = document.getElementById('pagamento').value;
-
+            const tipo = document.querySelector('input[name="tipo"]:checked').value; const descricao = document.getElementById('descricao').value; const valor = parseFloat(document.getElementById('valor').value); const origem = document.getElementById('origem').value; const pagamento = document.getElementById('pagamento').value;
             if (!descricao || !valor) return;
-            
-            const transacao = {
-                id: Date.now(),
-                data: new Date().toISOString(),
-                tipo,
-                descricao,
-                valor,
-                origem: tipo === 'receita' ? origem : null,
-                pagamento: tipo === 'despesa' ? pagamento : null,
-            };
-            financas.transacoes.push(transacao);
-            document.getElementById('form-transacao').reset();
-            saveDataToFirebase();
+            const transacao = { id: Date.now(), data: new Date().toISOString(), tipo, descricao, valor, origem: tipo === 'receita' ? origem : null, pagamento: tipo === 'despesa' ? pagamento : null };
+            financas.transacoes.push(transacao); document.getElementById('form-transacao').reset(); saveDataToFirebase();
         }
-
-        window.deletarTransacao = (id) => {
-            financas.transacoes = financas.transacoes.filter(t => t.id !== id);
-            saveDataToFirebase();
-        };
+        window.deletarTransacao = (id) => { financas.transacoes = financas.transacoes.filter(t => t.id !== id); saveDataToFirebase(); };
 
         function adicionarCartao() {
-            const nome = document.getElementById('nome-cartao').value;
-            const limite = parseFloat(document.getElementById('limite-cartao').value);
+            const nome = document.getElementById('nome-cartao').value; const limite = parseFloat(document.getElementById('limite-cartao').value);
             if(!nome || isNaN(limite)) return;
             const cartao = { id: Date.now(), nome, limite, pagamentos: [] };
             if (!financas.cartoes) financas.cartoes = [];
-            financas.cartoes.push(cartao);
-            document.getElementById('form-cartao').reset();
-            saveDataToFirebase();
+            financas.cartoes.push(cartao); document.getElementById('form-cartao').reset(); saveDataToFirebase();
         }
-
-        window.deletarCartao = (id) => {
-            financas.cartoes = financas.cartoes.filter(c => c.id !== id);
-            saveDataToFirebase();
-        };
+        window.deletarCartao = (id) => { financas.cartoes = financas.cartoes.filter(c => c.id !== id); saveDataToFirebase(); };
         
         window.pagarFatura = (cardId, formElement) => {
             const valorPagamento = parseFloat(formElement.valorPagamento.value);
-            if (isNaN(valorPagamento) || valorPagamento <= 0) {
-                alert("Por favor, insira um valor de pagamento válido.");
-                return;
-            }
-
+            if (isNaN(valorPagamento) || valorPagamento <= 0) { alert("Por favor, insira um valor de pagamento válido."); return; }
             const card = financas.cartoes.find(c => c.id === cardId);
             if (card) {
-                // Adiciona o pagamento ao registro do cartão
                 if (!card.pagamentos) card.pagamentos = [];
-                card.pagamentos.push({
-                    id: Date.now(),
-                    data: new Date().toISOString(),
-                    valor: valorPagamento
-                });
-
-                // Cria uma despesa correspondente saindo do saldo principal
-                const transacao = {
-                    id: Date.now(),
-                    data: new Date().toISOString(),
-                    tipo: 'despesa',
-                    descricao: `Pagamento Fatura - ${card.nome}`,
-                    valor: valorPagamento,
-                    pagamento: 'saldo',
-                };
-                financas.transacoes.push(transacao);
-                
-                formElement.reset();
-                saveDataToFirebase();
+                card.pagamentos.push({ id: Date.now(), data: new Date().toISOString(), valor: valorPagamento });
+                financas.transacoes.push({ id: Date.now(), data: new Date().toISOString(), tipo: 'despesa', descricao: `Pagamento Fatura - ${card.nome}`, valor: valorPagamento, pagamento: 'saldo' });
+                formElement.reset(); saveDataToFirebase();
             }
         };
 
-
         function adicionarParcelamento() {
-            const descricao = document.getElementById('parcela-descricao').value;
-            const valorTotal = parseFloat(document.getElementById('parcela-valor').value);
-            const totalParcelas = parseInt(document.getElementById('parcela-numero').value);
+            const descricao = document.getElementById('parcela-descricao').value; const valorTotal = parseFloat(document.getElementById('parcela-valor').value); const totalParcelas = parseInt(document.getElementById('parcela-numero').value);
             if (!descricao || !valorTotal || !totalParcelas) return;
-            
-            const parcelamento = {
-                id: Date.now(),
-                descricao,
-                valorTotal,
-                totalParcelas,
-                pagas: 0,
-                valorParcela: valorTotal / totalParcelas,
-            };
+            const parcelamento = { id: Date.now(), descricao, valorTotal, totalParcelas, pagas: 0, valorParcela: valorTotal / totalParcelas };
             if (!financas.parcelamentos) financas.parcelamentos = [];
-            financas.parcelamentos.push(parcelamento);
-            document.getElementById('form-parcelamento').reset();
-            saveDataToFirebase();
+            financas.parcelamentos.push(parcelamento); document.getElementById('form-parcelamento').reset(); saveDataToFirebase();
         }
-
         window.pagarParcela = (id) => {
-            const parcelamento = financas.parcelamentos.find(p => p.id === id);
-            if (parcelamento && parcelamento.pagas < parcelamento.totalParcelas) {
-                parcelamento.pagas++;
-                const transacao = {
-                    id: Date.now(),
-                    data: new Date().toISOString(),
-                    tipo: 'despesa',
-                    descricao: `Parcela ${parcelamento.pagas}/${parcelamento.totalParcelas} - ${parcelamento.descricao}`,
-                    valor: parcelamento.valorParcela,
-                    pagamento: 'saldo',
-                };
-                financas.transacoes.push(transacao);
+            const p = financas.parcelamentos.find(p => p.id === id);
+            if (p && p.pagas < p.totalParcelas) {
+                p.pagas++;
+                financas.transacoes.push({ id: Date.now(), data: new Date().toISOString(), tipo: 'despesa', descricao: `Parcela ${p.pagas}/${p.totalParcelas} - ${p.descricao}`, valor: p.valorParcela, pagamento: 'saldo' });
                 saveDataToFirebase();
             }
         };
 
         function adicionarItemEstoque() {
-            const nome = document.getElementById('item-nome').value;
-            const qtd = parseInt(document.getElementById('item-qtd').value);
-            const min = parseInt(document.getElementById('item-min').value);
+            const nome = document.getElementById('item-nome').value; const qtd = parseInt(document.getElementById('item-qtd').value); const min = parseInt(document.getElementById('item-min').value);
             if (!nome || isNaN(qtd) || isNaN(min)) return;
-            const item = { id: Date.now(), nome, qtd, min };
-            if (!estoque) estoque = [];
-            estoque.push(item);
-            document.getElementById('form-estoque').reset();
-            saveDataToFirebase();
+            estoque.push({ id: Date.now(), nome, qtd, min }); document.getElementById('form-estoque').reset(); saveDataToFirebase();
         }
+        window.deletarItemEstoque = (id) => { estoque = estoque.filter(i => i.id !== id); saveDataToFirebase(); }
+        window.atualizarQtdItem = (id, mudanca) => { const item = estoque.find(i => i.id === id); if (item && (item.qtd + mudanca >= 0)) { item.qtd += mudanca; saveDataToFirebase(); } }
+        
+        function adicionarCompromisso() {
+            const descricao = document.getElementById('agenda-descricao').value; const dataInput = document.getElementById('agenda-data').value; const hora = document.getElementById('agenda-hora').value;
+            if (!descricao || !dataInput || !hora) return;
+            const [year, month, day] = dataInput.split('-');
+            const data = new Date(year, month - 1, day).toISOString();
+            agenda.push({ id: Date.now(), descricao, data, hora }); document.getElementById('form-agenda').reset(); saveDataToFirebase();
+        }
+        window.deletarCompromisso = (id) => { agenda = agenda.filter(c => c.id !== id); saveDataToFirebase(); };
 
-        window.deletarItemEstoque = (id) => {
-            estoque = estoque.filter(i => i.id !== id);
-            saveDataToFirebase();
+        function adicionarTarefaCasa() {
+            const descricao = document.getElementById('tarefa-casa-descricao').value; const responsavel = document.getElementById('tarefa-casa-responsavel').value;
+            if (!descricao) return;
+            tarefasCasa.push({ id: Date.now(), descricao, responsavel, status: 'pendente' }); document.getElementById('form-tarefa-casa').reset(); saveDataToFirebase();
         }
-
-        window.atualizarQtdItem = (id, mudanca) => {
-            const item = estoque.find(i => i.id === id);
-            if (item && (item.qtd + mudanca >= 0)) {
-                item.qtd += mudanca;
-                saveDataToFirebase();
-            }
-        }
+        window.deletarTarefaCasa = (id) => { tarefasCasa = tarefasCasa.filter(t => t.id !== id); saveDataToFirebase(); };
+        window.concluirTarefaCasa = (id) => { const tarefa = tarefasCasa.find(t => t.id === id); if (tarefa) { tarefa.status = 'concluida'; tarefa.dataConclusao = new Date().toISOString(); saveDataToFirebase(); } };
         
         function adicionarParticipante() {
             const nome = document.getElementById('participante-nome').value;
             if(!nome) return;
-            const participante = { id: Date.now(), nome, pontos: {} };
-            if (!tarefas.participantes) tarefas.participantes = [];
-            tarefas.participantes.push(participante);
-            document.getElementById('form-participante').reset();
-            saveDataToFirebase();
+            if (!tarefasInfantis.participantes) tarefasInfantis.participantes = [];
+            tarefasInfantis.participantes.push({ id: Date.now(), nome, pontos: {} }); document.getElementById('form-participante').reset(); saveDataToFirebase();
         }
-
-        function adicionarTarefa() {
-            const descricao = document.getElementById('tarefa-descricao').value;
-            const responsavel = document.getElementById('tarefa-responsavel').value;
-            const pontos = parseInt(document.getElementById('tarefa-pontos').value);
-            const frequencia = document.getElementById('tarefa-frequencia').value;
+        function adicionarTarefaInfantil() {
+            const descricao = document.getElementById('tarefa-infantil-descricao').value; const responsavel = document.getElementById('tarefa-infantil-responsavel').value; const pontos = parseInt(document.getElementById('tarefa-infantil-pontos').value); const frequencia = document.getElementById('tarefa-infantil-frequencia').value;
             if (!descricao || !responsavel || isNaN(pontos)) return;
-
-            const tarefa = { id: Date.now(), descricao, responsavel, pontos, frequencia, status: 'pendente', dataCriacao: new Date().toISOString() };
-            if (!tarefas.tarefas) tarefas.tarefas = [];
-            tarefas.tarefas.push(tarefa);
-            document.getElementById('form-tarefa').reset();
-            saveDataToFirebase();
+            if (!tarefasInfantis.tarefas) tarefasInfantis.tarefas = [];
+            tarefasInfantis.tarefas.push({ id: Date.now(), descricao, responsavel, pontos, frequencia, status: 'pendente', dataCriacao: new Date().toISOString() }); document.getElementById('form-tarefa-infantil').reset(); saveDataToFirebase();
         }
-
-        window.deletarTarefa = (id) => {
-            tarefas.tarefas = tarefas.tarefas.filter(t => t.id !== id);
-            saveDataToFirebase();
-        }
-        
-        window.concluirTarefa = (id, foiFeita) => {
-            const tarefa = tarefas.tarefas.find(t => t.id === id);
-            const participante = tarefas.participantes.find(p => p.nome === tarefa.responsavel);
+        window.deletarTarefaInfantil = (id) => { tarefasInfantis.tarefas = tarefasInfantis.tarefas.filter(t => t.id !== id); saveDataToFirebase(); };
+        window.concluirTarefaInfantil = (id, foiFeita) => {
+            const tarefa = tarefasInfantis.tarefas.find(t => t.id === id);
+            const participante = tarefasInfantis.participantes.find(p => p.nome === tarefa.responsavel);
             if (tarefa && participante) {
-                tarefa.status = foiFeita ? 'feita' : 'nao-feita';
-                tarefa.dataConclusao = new Date().toISOString();
-                
-                const agora = new Date();
-                const mesKey = `${agora.getFullYear()}-${String(agora.getMonth()).padStart(2, '0')}`; // Mês é 0-indexado
-
-                // Garante que a estrutura de pontos seja um objeto
-                if (typeof participante.pontos !== 'object' || participante.pontos === null) {
-                    participante.pontos = {};
-                }
-
-                // Inicia a pontuação do mês se não existir
-                if (participante.pontos[mesKey] === undefined) {
-                    participante.pontos[mesKey] = 100;
-                }
-
-                if (foiFeita) {
-                    participante.pontos[mesKey] += tarefa.pontos;
-                } else {
-                    participante.pontos[mesKey] -= tarefa.pontos;
-                }
-
+                tarefa.status = foiFeita ? 'feita' : 'nao-feita'; tarefa.dataConclusao = new Date().toISOString();
+                const agora = new Date(); const mesKey = `${agora.getFullYear()}-${String(agora.getMonth()).padStart(2, '0')}`;
+                if (typeof participante.pontos !== 'object' || participante.pontos === null) { participante.pontos = {}; }
+                if (participante.pontos[mesKey] === undefined) { participante.pontos[mesKey] = 100; }
+                participante.pontos[mesKey] += foiFeita ? tarefa.pontos : -tarefa.pontos;
                 saveDataToFirebase();
             }
-        }
+        };
     </script>
 </body>
 </html>
